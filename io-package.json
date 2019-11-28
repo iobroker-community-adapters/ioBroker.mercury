@@ -1,0 +1,107 @@
+{
+    "common": {
+        "name": "mercury",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版"
+            }
+        },
+        "title": "Mercury electric meter",
+        "titleLang": {
+            "en": "Mercury electric meter",
+            "de": "Quecksilber-Stromzähler",
+            "ru": "Меркурий электросчетчик",
+            "pt": "Medidor elétrico de mercúrio",
+            "nl": "Kwik elektrische meter",
+            "fr": "Compteur électrique à mercure",
+            "it": "Contatore elettrico al mercurio",
+            "es": "Medidor electrico de mercurio",
+            "pl": "Miernik elektryczny rtęci",
+            "zh-cn": "汞电表"
+        },
+        "desc": {
+            "en": "Receiving data from electricity meters Mercury",
+            "de": "Empfangen von Daten von Stromzählern Quecksilber",
+            "ru": "Получение данных от электросчетчиков Меркурий",
+            "pt": "Recebendo dados de contadores de eletricidade Mercury",
+            "nl": "Gegevens ontvangen van elektriciteitsmeters Mercury",
+            "fr": "Réception des données des compteurs d'électricité Mercury",
+            "it": "Ricezione di dati dai contatori elettrici Mercury",
+            "es": "Recepción de datos de medidores de electricidad Mercurio",
+            "pl": "Odbieranie danych z liczników energii elektrycznej Merkury",
+            "zh-cn": "从电表接收数据汞"
+        },
+        "authors": [
+            "instalator <vvvalt@mail.ru>"
+        ],
+        "keywords": [
+            "Mercury",
+            "electric meter"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "main.js",
+        "icon": "mercury.png",
+        "enabled": true,
+        "messagebox": true,
+        "extIcon": "https://raw.githubusercontent.com/instalator/ioBroker.mercury/master/admin/mercury.png",
+        "readme": "https://github.com/instalator/ioBroker.mercury/blob/master/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "energy",
+        "compact": true,
+        "materialize": true,
+        "stopBeforeUpdate": true,
+        "dependencies": [
+            {
+                "js-controller": ">=1.4.2"
+            }
+        ]
+    },
+    "native": {
+        "typeconnect": "tcp",
+        "ip": "127.0.0.1",
+        "tcpport": 21,
+        "pollingtime": 60,
+        "usbport": "",
+        "baud": 9600,
+        "parity": false,
+        "timeoutresponse": 60,
+        "systemtimeout": 60,
+        "factortimeout": 1
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

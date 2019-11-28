@@ -1,0 +1,655 @@
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css"/>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <script type="text/javascript" src="admin.js"></script>
+    <script type="text/javascript" src="words.js"></script>
+    <style>
+        #tabs {
+            margin-top: 60px;
+        }
+        .page:not(.active) {
+        	display: none;
+    	}
+        #modalconfig {
+            width: 90%;
+        }
+        #modal-content {
+            width: 100% !important;
+        }
+        #modal-settings-btn {
+        	margin-right: 5px;
+        }
+      
+        img.activator {
+            height: 150px;
+            width: auto !important;
+            display: block;
+            margin: 0 auto;
+        }
+        .card-reveal ul{
+            font-size: 12px;
+            margin-bottom: 0px;
+            display: block;
+        }
+        .info-reveal-left {
+            text-align: left;
+            font-weight: bold;
+        }
+        .info-reveal-right {
+            float: right;
+        }
+	    .serial-list-btn { 
+	        position: absolute;
+			padding-right: 0px;
+			cursor: pointer;
+			font-size: 3rem;
+			transition: color .2s;
+			right: 0.5rem;
+        }
+    </style>
+
+</head>
+<body>
+<div id="main" class="m adapter-container">
+    <div class="row navbar-fixed">
+        <nav class="nav-extended">
+            <div class="nav-wrapper">
+                <div class="col m1 l1 s1">
+                    <img src="mercury.png" class="brand-logo" height="64px">
+                </div>
+                <div class="col s6 l6 m6">
+                    <h5 class="translate center-align">mercury adapter</h5>
+                </div>
+            </div>
+            <div class="nav-content">
+                <ul class="tabs tabs-transparent">
+                    <li class="tab"><a href="#tab-devices" class="active"><i class="material-icons left">devices</i><span class="translate">devices</span></a></li>
+                    <li class="tab"><a href="#tab-settings"><i class="material-icons left">settings</i><span class="translate">settings</span></a></li>
+                    <a style="margin-top: 3px;" id="add-button" class="btn-floating waves-effect waves-light red modal-trigger hoverable right" href="#modaladd"><i class="material-icons right">add</i></a>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div id="tabs" class="tabs-content row">
+        <div id="tab-devices" class="col s12 page active">
+            <div id="devices" class="row">
+            </div>
+        </div>
+        <div id="tab-settings" class="col s12 page">
+            <div id="typec" class="row col m12">
+                <div class="col m12">
+                    <div class="input-field col s3">
+                        <select id="typeconnect" class="value">
+                            <option value="tcp" class="translate">tcp</option>
+                            <option value="usb" class="translate">usb</option>
+                        </select>
+                        <label class="translate">typeconnect</label>
+                    </div>
+                </div>
+            </div>
+            <div id="tcp-block" class="row col m12">
+                <div class="col m12">
+                    <div class="input-field col s2">
+                        <input id="ip" type="text" class="value"><label for="ip" class="translate">ip</label>
+                    </div>
+                    <div class="input-field col s1">
+                        <input id="tcpport" type="text" class="value"><label for="tcpport" class="translate">tcpport</label>
+                    </div>
+                </div>
+            </div>
+            <div id="tcp-block" class="row col m12">
+            	<div class="col m12">
+            		<div class="input-field col s2">
+                        <input id="pollingtime" type="text" class="value"><label for="pollingtime" class="translate">pollingtime</label>
+                    </div>
+            	</div>
+            </div>
+            <div id="usb-block" class="row col m12">
+                <div class="row col m12">
+                    	<div class="input-field input-group col s12 m6 l3">
+			                    <input id="usbport" type="text" class="value validate" list="serial-list" autocomplete="on"/>
+<!--								<i class="material-icons serial-list-btn">arrow_drop_down</i>-->
+								<label for="usbport" class="translate">usbport</label>
+								<datalist id="serial-list">
+								<!--dinamic list-->
+								</datalist>
+						</div>
+                    <div class="input-field col s2">
+                        <select id="baud" class="value">
+                            <option value="300">300</option>
+                            <option value="600">600</option>
+                            <option value="1200">1200</option>
+                            <option value="2400">2400</option>
+                            <option value="4800">4800</option>
+                            <option value="9600">9600</option>
+                            <option value="19200">19200</option>
+                            <option value="38400">38400</option>
+                            <option value="57600">57600</option>
+                            <option value="115200">115200</option>
+                        </select>
+                        <label class="translate">baud</label>
+                    </div>
+                    <div class="input-field col s3 m3 l3">
+                        <label for="disableLed">
+                            <input id="parity" type="checkbox" class="value"/>
+                            <span class="translate">parity</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="row col m12">
+                    <div class="input-field col s3 m3 11">
+                        <input id="timeoutresponse" type="number" min="0" max="5000" class="value"/>
+                        <label class="translate" for="timeoutresponse">timeoutresponse</label>
+                    </div>
+                </div>
+                <div class="row col m12">
+                    <div class="input-field col s3 m3 11">
+                        <input id="systemtimeout" type="number" min="0" max="100" class="value"/>
+                        <label class="translate" for="systemtimeout">systemtimeout</label>
+                    </div>
+                </div>
+                <div class="row col m12">
+                    <div class="input-field col s3 m3 11">
+                        <input id="factortimeout" type="number" min="0" max="25" class="value"/>
+                        <label class="translate" for="factortimeout">factortimeout</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<!-- modaldelete-->
+	<div id="modalconfirmdelete" class="modal modalconfirmdelete modal-fixed-footer">
+        <div id="modal-content" class="modal-content">
+            <h6><span class="translate">delete the device</span></h6>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat translate">cancel</a>
+            <a id="modalconfirmdelete-agree" onClick="" href="#!" class="modal-close waves-effect waves-green btn-flat translate">agree</a>
+        </div>
+    </div>
+	
+	
+	<!-- modalsettings  -->
+    <div id="modalsettings" class="modal modalsettings modal-fixed-footer">
+        <div id="modal-content" class="modal-content">
+            <h6><span class="translate">counter card settings</span></h6>
+            <div class="row">
+                <div class="input-field col s6">
+                    <select class="value meters-list" id="meters-list"></select>
+                    <label class="translate">model</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="settings-address" type="number" min="0" max="255" class="value"/>
+                    <label class="translate" for="settings-address">address</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <select id="settings-user" class="value">
+                        <option value="1" class="translate">user</option>
+                        <option value="2" class="translate">admin</option>
+                    </select>
+                    <label class="translate">user</label>
+                </div>
+                <div class="input-field col s6">
+                    <input id="password" type="text" class="value">
+                    <label for="password" class="translate">password</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s6">
+                    <input id="name" type="text" class="value">
+                    <label for="name" class="translate">name</label>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat translate">cancel</a>
+            <a id="modalsettings-agree" onClick="" href="#!" class="modal-close waves-effect waves-green btn-flat translate">agree</a>
+        </div>
+    </div>
+
+    
+    <!-- modaladd   -->
+    <div id="modaladd" class="modal modaladd modal-fixed-footer">
+            <div id="modal-content" class="modal-content">
+                <h6><span class="translate">add counter</span></h6>
+                <div class="row col s12">
+                    <label class="translate" for="countDown">input addres or sn</label>
+                </div>
+                <div id="row-notsingle" class="row">
+                	<div class="input-field col s6">
+                    	<select class="value" id="meters-list-add"></select>
+                    	<label class="translate">model</label>
+	                </div>
+	                <div class="input-field col s6">
+	                    <input id="address" type="text" class="value">
+	                    <label for="address" class="translate">addres or sn</label>
+	            	</div>
+            	</div>
+                <div id="userandpassword" class="row">
+                    <div class="input-field col s6">
+                        <select id="finddev-user" class="value">
+                            <option value="1" selected class="translate">user</option>
+                            <option value="2" class="translate">admin</option>
+                        </select>
+                        <label class="translate">user</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="finddev-password" type="text" class="value">
+                        <label for="finddev-password" class="translate">password</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-flat translate">cancel</a>
+                <button id="discovery-btn" class="btn waves-effect waves-light" type="submit" name="action"><span class="translate">find</span>
+                     <i class="material-icons right">autorenew</i>
+                </button>
+            </div>
+        </div>
+
+
+<!-- modalconfig   -->
+
+    <div id="modalconfig" class="modal modal-fixed-footer">
+        <div id="modal-content" class="modal-content">
+            <h6>Конфигурация счетчика</h6>
+            <ul class="tabs tabs-fixed-width tab-demo z-depth-1">
+                <li class="tab col s3"><a href="#time">Время</a></li>
+                <li class="tab col s3"><a class="active" href="#indication">Индикация</a></li>
+                <li class="tab col s3 disabled"><a href="#test3">Упр. нагрузкой</a></li>
+                <li class="tab col s3"><a href="#test4">Тарифы</a></li>
+                <li class="tab col s3"><a href="#test5">Профиль мощности</a></li>
+                <li class="tab col s3"><a href="#test6">Модем</a></li>
+            </ul>
+
+            <div id="time" class="col s12">
+                <div class="row s12">
+                    <div class="col s12">
+                    	<br>
+                        <label class="translate" for="countDown">На данной вкладке можно настроить внутренние часы
+                            подключенного устройства</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label class="translate" for="countDown"><h6>Текущее дата и время</h6></label>
+                        <div class="row col s12">
+                            <div class="input-field col s4">
+                                <input id="counter" type="text" class="value">
+                                <label for="counter" class="translate">Устройство</label>
+                            </div>
+                            <div class="input-field col s4">
+                                <form action="#">
+                                    <label>
+                                        <input class="value" name="group1" type="radio" checked/>
+                                        <span>Зима</span>
+                                    </label>
+                                    <label>
+                                        <input class="value" name="group1" type="radio"/>
+                                        <span>Лето</span>
+                                    </label>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row col s12">
+                            <div class="input-field col s4">
+                                <input id="system" type="text" class="value">
+                                <label for="system" class="translate">Системное</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12">
+                        <label class="translate" for="countDown"><h6>Сезоны</h6></label>
+                        <div class="row col s12">
+                            <div class="input-field col s2">
+                                <label class="translate" for="countDown">Переход зима-лето</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <select class="value">
+                                    <option value="1">Январь</option>
+                                    <option value="2">Февраль</option>
+                                    <option value="1">Март</option>
+                                    <option value="1">Апрель</option>
+                                    <option value="1">Май</option>
+                                    <option value="1">Июнь</option>
+                                    <option value="1">Июль</option>
+                                    <option value="1">Август</option>
+                                    <option value="1">Сентябрь</option>
+                                    <option value="1">Октябрь</option>
+                                    <option value="1">Ноябрь</option>
+                                    <option value="1">Декабрь</option>
+                                </select>
+                                <label class="translate">Месяц</label>
+                            </div>
+                            <div class="input-field col s2 l3">
+                                <select class="value">
+                                    <option value="1">Понедельник</option>
+                                    <option value="2">Вторник</option>
+                                    <option value="1">Среда</option>
+                                    <option value="1">Четверг</option>
+                                    <option value="1">Пятница</option>
+                                    <option value="1">Суббота</option>
+                                    <option value="1">Воскресенье</option>
+                                </select>
+                                <label class="translate">День недели</label>
+                            </div>
+                            <div class="input-field col s1">
+                                <input type="number" min="0" max="24" class="value"/>
+                                <label class="translate" for="countDown">Час</label>
+                            </div>
+                        </div>
+                        <div class="row col s12">
+                            <div class="input-field col s2">
+                                <label class="translate" for="countDown">Переход лето-зима</label>
+                            </div>
+                            <div class="input-field col s2">
+                                <select class="value">
+                                    <option value="1">Январь</option>
+                                    <option value="2">Февраль</option>
+                                    <option value="1">Март</option>
+                                    <option value="1">Апрель</option>
+                                    <option value="1">Май</option>
+                                    <option value="1">Июнь</option>
+                                    <option value="1">Июль</option>
+                                    <option value="1">Август</option>
+                                    <option value="1">Сентябрь</option>
+                                    <option value="1">Октябрь</option>
+                                    <option value="1">Ноябрь</option>
+                                    <option value="1">Декабрь</option>
+                                </select>
+                                <label class="translate">Месяц</label>
+                            </div>
+                            <div class="input-field col s2 l3">
+                                <select class="value">
+                                    <option value="1">Понедельник</option>
+                                    <option value="2">Вторник</option>
+                                    <option value="1">Среда</option>
+                                    <option value="1">Четверг</option>
+                                    <option value="1">Пятница</option>
+                                    <option value="1">Суббота</option>
+                                    <option value="1">Воскресенье</option>
+                                </select>
+                                <label class="translate">День недели</label>
+                            </div>
+                            <div class="input-field col s1">
+                                <input type="number" min="0" max="24" class="value"/>
+                                <label class="translate" for="countDown">Час</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col m12">
+                    <div class="input-field col s12 m12 l12">
+                        <label for="disableLed">
+                            <input type="checkbox" class="value"/>
+                            <span class="translate">Автоматический перевод часов</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="indication" class="col s12">
+                <div class="row s12">
+                    <div class="col s12">
+						<br>
+                        <label class="translate" for="countDown">На данной вкладке можно произвести настройку режима
+                            индикации счетчика</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label class="translate" for="countDown"><h6>Активная энергия</h6></label>
+                        <div class="row">
+                            <div class="col s6">
+                                <label class="translate" for="countDown">Авто режим</label>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Сумма</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 1</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 2</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 3</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 4</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Потери</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s6">
+                                <label class="translate" for="countDown">Ручной режим</label>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Сумма</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 1</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 2</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 3</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 4</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Потери</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col s6">
+                        <label class="translate" for="countDown"><h6>Реактивная энергия</h6></label>
+                        <div class="row">
+                            <div class="col s6">
+                                <label class="translate" for="countDown">Авто режим</label>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Сумма</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 1</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 2</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 3</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 4</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Потери</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col s6">
+                                <label class="translate" for="countDown">Ручной режим</label>
+                                <div class="row">
+                                    <div class="col s12">
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Сумма</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 1</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 2</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 3</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Тариф 4</span>
+                                            </label>
+                                        </div>
+                                        <div class="input-field col s12">
+                                            <label for="disableLed">
+                                                <input type="checkbox" class="value"/>
+                                                <span class="translate">Потери</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s6">
+                        <label class="translate" for="countDown"><h6>Интервалы индикации</h6></label>
+                        <div class="row">
+                            <div class="col s6">
+                                <div class="input-field col s12">
+                                    <input id="system" type="text" class="validate">
+                                    <label for="system" class="translate">Период индикации</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="system" type="text" class="validate">
+                                    <label for="system" class="translate">Текущий тариф</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="system" type="text" class="validate">
+                                    <label for="system" class="translate">Нетекущий тариф</label>
+                                </div>
+                                <div class="input-field col s12">
+                                    <input id="system" type="text" class="validate">
+                                    <label for="system" class="translate">Таймаут возврата</label>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+					<div class="col s6">
+						<label class="translate" for="countDown"><h6>Флаги управления</h6></label>
+						<div class="row">
+							<div class="col s12">
+								<div class="input-field col s12">
+									<label for="disableLed">
+										<input type="checkbox" class="value"/>
+										<span class="translate">Индикация по нажатию кнопок</span>
+									</label>
+								</div>
+								<div class="input-field col s12">
+									<label for="disableLed">
+										<input type="checkbox" class="value"/>
+										<span class="translate">Индикация при отключ. питании</span>
+									</label>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+                <div id="test3" class="col s12">Test 3</div>
+                <div id="test4" class="col s12">Test 4</div>
+                <div id="test5" class="col s12">Test 5</div>
+                <div id="test6" class="col s12">Test 6</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
+    </div>
+
+
+</body>
+</html>
