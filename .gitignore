@@ -2,6 +2,7 @@
 .idea
 .vscode
 .github
+.eslintrc.json
 *.code-workspace
 node_modules
 nbproject
