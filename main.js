@@ -29,9 +29,20 @@ function startAdapter(options){
             }
         },
         stateChange:  (id, state) => {
-            if (state){
-                // The state was changed
-                //adapter.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+            if (id && state && !state.ack){
+                adapter.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+                id = id.substring(adapter.namespace.length + 1);
+                switch (id) {
+                    case 'states.raw':
+                        let msg;
+                        //TODO
+                        send(msg, function (response){
+                            adapter.log.debug('Ответ получен - ' + JSON.stringify(response));
+                            adapter.setState(name, {val: JSON.stringify(response), ack: true});
+                        });
+                        break;
+                    default:
+                }
             } else {
                 // The state was deleted
                 //adapter.log.info(`state ${id} deleted`);
@@ -51,7 +62,7 @@ function startAdapter(options){
                         _callback = function (e){
                             if (e) adapter.log.error('findDevice ERROR ---' + JSON.stringify(e));
                             isPoll = true;
-                            obj.callback && adapter.sendTo(obj.from, obj.command, e ? {error: e} : devices, obj.callback);
+                            obj.callback && adapter.sendTo(obj.from, obj.command, e ? {error: e} :devices, obj.callback);
                         };
                         findDevice(obj.message);
                     } else {
@@ -96,7 +107,7 @@ function setStates(index, name, desc, val){
                 type:   'state',
                 common: {
                     name: desc,
-                    desc: desc,
+                    desc: desc, 
                     type: 'number',
                     role: role
                 },
@@ -104,11 +115,29 @@ function setStates(index, name, desc, val){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
-            adapter.log.debug('state.val = ' + state.val + '/ val = ' + val) ;
+            adapter.log.debug('state.val = ' + state.val + '/ val = ' + val);
             if (state.val !== val){
                 adapter.setState(name, {val: val, ack: true});
             }
         }
+    });
+}
+
+function setDev(index){
+    const prefix = devices[index].info.sn.val;
+    let img = parseInt(devices[index].conf.model.val);
+    if (img === 230 || img === 231 || img === 234){
+        img = img + '' + devices[index].info.typeCount.val;
+    }
+    const icon = 'img/' + img + '.png';
+    adapter.setObjectNotExists(prefix, {
+        type:   'device',
+        // actually this is an error, so device.common has no attribute type. It must be in native part
+        common: {name: devices[index].conf.name.val, type: 'counter', icon: icon},
+        native: {id: prefix}
+    }, () => {
+        // update type and icon
+        adapter.extendObject(prefix, {common: {name: devices[index].conf.name.val, type: 'counter', icon: icon}});
     });
 }
 
@@ -118,6 +147,7 @@ function setObjects(index){
     const obj = devices[index].metering;
     let desc = '';
     const prefix = devices[index].info.sn.val;
+    setDev(index);
     for (const key1 in obj) {
         if (!obj.hasOwnProperty(key1)) continue;
         name = prefix + '.' + key1;
@@ -423,7 +453,7 @@ function send(msg, cb){
 
 function main(){
     adapter.subscribeStates('*');
-    pollingtime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 :30000;
+    pollingtime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 : 60000;
     dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
@@ -488,12 +518,10 @@ function connectSerial(){
         adapter.log.debug('readable Data:', serial.read());
     });
     serial.on('error', function (err){
-        console.log('Error: ', err.message);
-        adapter.log.debug('Serial ERROR: ' + JSON.stringify(err));
+        adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
     });
     serial.on('close', function (err){
-        console.log('Close: ', err.message);
-        adapter.log.debug('serial closed');
+        adapter.log.debug('serial closed'  + JSON.stringify(err));
         //reconnect();
     });
 }
@@ -527,19 +555,19 @@ function connectTCP(){
         //reconnect();
     });
     mercury.on('error', (e) => {
-        adapter.log.debug('Mercury ERROR: ' + JSON.stringify(e));
-        if (e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY') reconnect();
+        adapter.log.error('Mercury ERROR: ' + JSON.stringify(e));
+        if (e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL') reconnect();
     });
     mercury.on('end', () => {
         adapter.log.debug('Disconnected from server');
-        reconnect(); //TODO EISCONN
+        reconnect();
         _callback && _callback('Disconnected from server');
     });
 }
 
 function openChannel(index, msg, cb){
     msg.addr = index ? devices[index].conf.addr.val :msg.addr;
-    msg.protocol = index ? devices[index].conf.protocol.val : msg.protocol;
+    msg.protocol = index ? devices[index].conf.protocol.val :msg.protocol;
     if (index !== null){
         msg.pwd = devices[index].conf.pwd.val;
         msg.user = parseInt(devices[index].conf.user.val, 10);
