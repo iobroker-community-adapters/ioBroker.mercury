@@ -6,19 +6,18 @@ const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const mercury = new net.Socket();
 let serial;
-let _serial;
+//let _serial;
 //const InterByteTimeout = require('serialport/parser-inter-byte-timeout');
-
-let adapter, dir, _callback, timeout, pollingInterval;
+let adapter, _callback, timeout;
 let devices = [], dataFile = 'devices.json', isPoll = false, isOnline = false, iter = 0, n = 0, firstStart = true,
-    pollingtime = null;
+    pollingTime = 60000, pollingInterval = null;
 
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 function startAdapter(options){
     return adapter = utils.adapter(Object.assign({}, options, {
-        name:         'mercury',
         systemConfig: true,
+        name:         'mercury',
         ready:        main, // Main method defined below for readability
         unload:       (callback) => {
             try {
@@ -34,11 +33,11 @@ function startAdapter(options){
                 id = id.substring(adapter.namespace.length + 1);
                 switch (id) {
                     case 'states.raw':
-                        let msg;
+                        const msg = '';
                         //TODO
                         send(msg, function (response){
                             adapter.log.debug('Ответ получен - ' + JSON.stringify(response));
-                            adapter.setState(name, {val: JSON.stringify(response), ack: true});
+                            adapter.setState('raw', {val: JSON.stringify(response), ack: true});
                         });
                         break;
                     default:
@@ -73,7 +72,7 @@ function startAdapter(options){
                     if (obj.message.conf.pwd.val !== null){
                         obj.message.conf.pwd.val = obj.message.conf.pwd.val.toString().split('');
                     }
-                    devices[obj.message.index].conf = obj.message.conf
+                    devices[obj.message.index].conf = obj.message.conf;
                     devices[obj.message.index].conf.model.name = m.options.model[obj.message.conf.model.val].desc;
                     saveDevices();
                     obj.callback && adapter.sendTo(obj.from, obj.command, devices, obj.callback);
@@ -107,7 +106,7 @@ function setStates(index, name, desc, val){
                 type:   'state',
                 common: {
                     name: desc,
-                    desc: desc, 
+                    desc: desc,
                     type: 'number',
                     role: role
                 },
@@ -149,25 +148,25 @@ function setObjects(index){
     const prefix = devices[index].info.sn.val;
     setDev(index);
     for (const key1 in obj) {
-        if (!obj.hasOwnProperty(key1)) continue;
+        if (!Object.hasOwnProperty.call(obj, key1)) continue;
         name = prefix + '.' + key1;
         //adapter.log.debug('key1 = ' + key1 + ' / name = ' + name);
         if (obj[key1]['val'] === undefined){
             const obj1 = obj[key1];
             for (const key2 in obj1) {
-                if (!obj1.hasOwnProperty(key2)) continue;
+                if (!Object.hasOwnProperty.call(obj1, key2)) continue;
                 name = prefix + '.' + key1 + '.' + key2;
                 //adapter.log.debug('key2 = ' + key2 + ' / name = ' + name);
                 if (obj1[key2]['val'] === undefined){
                     const obj2 = obj1[key2];
                     for (const key3 in obj2) {
-                        if (!obj2.hasOwnProperty(key3)) continue;
+                        if (!Object.hasOwnProperty.call(obj2, key3)) continue;
                         name = prefix + '.' + key1 + '.' + key2 + '.' + key3;
                         //adapter.log.debug('key3 = ' + key3 + ' / name = ' + name);
                         if (obj2[key3]['val'] === undefined){
                             const obj3 = obj2[key3];
                             for (const key4 in obj3) {
-                                if (!obj3.hasOwnProperty(key4)) continue;
+                                if (!Object.hasOwnProperty.call(obj3, key4)) continue;
                                 desc = obj3[key4].desc;
                                 val = obj3[key4].val;
                                 name = prefix + '.' + key1 + '.' + key2 + '.' + key3 + '.' + key4;
@@ -200,7 +199,7 @@ function poll(){
         for (let index = 0; index < devices.length; index++) {
             msg.protocol = devices[index].conf.protocol.val;
             if (msg.protocol === 2){
-                adapter.log.debug('Опрашиваем счетчик №' + index);
+                adapter.log.debug('Опрашиваем счетчик # ' + index);
                 openChannel(index, msg, function (e){
                     if (!e){
                         if (!firstStart){
@@ -453,8 +452,8 @@ function send(msg, cb){
 
 function main(){
     adapter.subscribeStates('*');
-    pollingtime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 : 60000;
-    dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
+    pollingTime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 :60000;
+    const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
 
@@ -508,7 +507,7 @@ function connectSerial(){
             if (devices.length > 0){
                 poll();
             }
-        }, pollingtime);
+        }, pollingTime);
     });
 
     //_serial = serial.pipe(new InterByteTimeout({interval: 30}));
@@ -521,7 +520,7 @@ function connectSerial(){
         adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
     });
     serial.on('close', function (err){
-        adapter.log.debug('serial closed'  + JSON.stringify(err));
+        adapter.log.debug('serial closed' + JSON.stringify(err));
         //reconnect();
     });
 }
@@ -548,7 +547,7 @@ function connectTCP(){
             if (devices.length > 0){
                 poll();
             }
-        }, pollingtime);
+        }, pollingTime);
     });
     mercury.on('close', (e) => {
         adapter.log.debug('closed ' + JSON.stringify(e));
