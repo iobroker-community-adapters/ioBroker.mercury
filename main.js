@@ -271,11 +271,7 @@ function findDevice(_msg){
                 }
             }
             msg.addr = parseInt(msg.addr, 10);
-<<<<<<< HEAD
             adapter.log.debug('Поиск треxфазного с адресом - ' + msg.addr);
-=======
-            adapter.log.debug('Поиск трехфазного ' + msg.addr + ' адрес');
->>>>>>> origin/master
             openChannel(null, msg, function (e){
                 if (!e){
                     msg.cmd = [msg.addr, 0x08, 0x05]; //Запрос 3 фазного
@@ -364,22 +360,14 @@ function getDeviceInfo(index, msg, cb){
 }
 
 function send(msg, cb){
-<<<<<<< HEAD
     //adapter.log.debug('mercury._events.data' + JSON.stringify(mercury._events.data));
-=======
-	//adapter.log.debug('mercury._events.data' + JSON.stringify(mercury._events.data));
->>>>>>> origin/master
     mercury._events.data = undefined;
     //serial._events.data = null;
     clearTimeout(timeout);
     timeout = setTimeout(function (){
         adapter.log.error('No response');
         mercury._events.data = undefined;
-<<<<<<< HEAD
         if (serial) serial._events.data = null;
-=======
-        if(serial) serial._events.data = null;
->>>>>>> origin/master
         isPoll = true;
         _callback && _callback('No response');
     }, 5000);
@@ -550,13 +538,8 @@ function connectTCP(){
 }
 
 function openChannel(index, msg, cb){
-<<<<<<< HEAD
     msg.addr = index ? devices[index].conf.addr.val :msg.addr;
-    msg.protocol = index ? devices[index].conf.protocol.val :msg.protocol;
-=======
-    msg.addr = index ? devices[index].conf.addr.val : msg.addr;
     msg.protocol = index ? devices[index].conf.protocol.val : msg.protocol;
->>>>>>> origin/master
     if (index !== null){
         msg.pwd = devices[index].conf.pwd.val;
         msg.user = parseInt(devices[index].conf.user.val, 10);
