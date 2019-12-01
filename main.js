@@ -451,12 +451,12 @@ function send(msg, cb){
 }
 
 function main(){
+    if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
     pollingTime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 :60000;
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
-
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
     fs.readFile(dataFile, (err, data) => {
         if (!err){
