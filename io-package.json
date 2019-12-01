@@ -102,18 +102,6 @@
                 "def": false
             },
             "native": {}
-        },
-        {
-            "_id":  "states.raw",
-            "type": "state",
-            "common": {
-                "name": "Send and response cmd",
-                "role": "state",
-                "type": "string",
-                "read": true,
-                "write": true
-            },
-            "native": {}
         }
     ]
 }

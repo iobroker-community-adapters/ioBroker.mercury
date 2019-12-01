@@ -8,11 +8,27 @@
 
 [![NPM](https://nodei.co/npm/iobroker.mercury.png?downloads=true)](https://nodei.co/npm/iobroker.mercury/)
 
-**Tests:**: [![Travis-CI](http://img.shields.io/travis/instalator/ioBroker.mercury/master.svg)](https://travis-ci.org/instalator/ioBroker.mercury)
+**Tests:** [![Travis-CI](http://img.shields.io/travis/instalator/ioBroker.mercury/master.svg)](https://travis-ci.org/instalator/ioBroker.mercury)
 
 ## mercury adapter for ioBroker
 
-Receiving data from electricity meters Mercury
+Receiving data from electricity meters Mercury.
+Supports TCP / IP and Serial connections.
+
+The following electricity meters are supported:
+* Mercury-200
+* Mercury-201
+* Mercury-206
+* Mercury-203
+* Mercury-203.2TD
+* Mercury-204
+* Mercury-208
+* Mercury-230
+* Mercury-231
+* Mercury-233
+* Mercury-234
+* Mercury-236
+* Mercury-238
 
 ## Changelog
 
