@@ -363,7 +363,7 @@ function parseFindPacket(response, msg, cb){ //response, cmd, protocol
 
 function getDeviceInfo(index, msg, cb){
     adapter.log.debug('Получаем информацию о счетчике. iter=' + iter);
-    adapter.log.debug('Длинна readinfo =' + m.options.protocol[msg.protocol].readinfo.length);
+    adapter.log.debug('Длинна массива readinfo =' + m.options.protocol[msg.protocol].readinfo.length);
     msg.cmd = [];
     let addr = [devices[index].conf.addr.val];
     if (msg.protocol === 1){
@@ -389,14 +389,13 @@ function getDeviceInfo(index, msg, cb){
 }
 
 function send(msg, cb){
-    //adapter.log.debug('mercury._events.data' + JSON.stringify(mercury._events.data));
     mercury._events.data = undefined;
-    //serial._events.data = null;
+    //if (serial) serial._events.data = undefined;
     clearTimeout(timeout);
     timeout = setTimeout(function (){
         adapter.log.error('No response');
         mercury._events.data = undefined;
-        if (serial) serial._events.data = null;
+        if (serial) serial._events.data = undefined;
         isPoll = true;
         _callback && _callback('No response');
     }, 5000);

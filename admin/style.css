@@ -6,5 +6,46 @@
     /* Don't cut off dropdowns! */
     overflow: initial;
 }
+#tabs {
+    margin-top: 60px;
+}
+.page:not(.active) {
+    display: none;
+}
+#modalconfig {
+    width: 90%;
+}
+#modal-content {
+    width: 100% !important;
+}
+#modal-settings-btn {
+    margin-right: 5px;
+}
+img.activator {
+    height: 150px;
+    width: auto !important;
+    display: block;
+    margin: 0 auto;
+}
+.card-reveal ul{
+    font-size: 12px;
+    margin-bottom: 0;
+    display: block;
+}
+.info-reveal-left {
+    text-align: left;
+    font-weight: bold;
+}
+.info-reveal-right {
+    float: right;
+}
+.serial-list-btn {
+    position: absolute;
+    padding-right: 0;
+    cursor: pointer;
+    font-size: 3rem;
+    transition: color .2s;
+    right: 0.5rem;
+}
 
 /* Add your styles here */

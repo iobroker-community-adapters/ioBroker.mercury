@@ -1,9 +1,9 @@
-var namespace = 'mercury.' + instance,
+let namespace = 'mercury.' + instance,
     namespaceLen = namespace.length;
-var devices = [];
-var options = {};
-var serialPorts = [];
-var lang;
+let devices = [];
+let options = {};
+let serialPorts = [];
+let lang;
 
 //var isAlive = false;
 
@@ -14,8 +14,8 @@ function load(settings, onChange){
     getOptions();
     console.log('///// settings ////// ' + JSON.stringify(settings));
     $('.value').each(function (){
-        var $key = $(this);
-        var id = $key.attr('id');
+        const $key = $(this);
+        const id = $key.attr('id');
         if ($key.attr('type') === 'checkbox'){
             $key.prop('checked', settings[id]).change(function (){
                 onChange();
@@ -38,7 +38,7 @@ $(document).ready(function (){
     sockets();
     $('.modal').modal();
     $("#typeconnect").on('change', selectTypeConn);
-    $("#add-button").click(function (e){
+    $("#add-button").click(function (){
         if (!isAlive){
             showMessage(_('driver is not running'), _('Error'), 'error_outline');
             return false;
@@ -176,14 +176,14 @@ function getCard(dev, i){
         _lang = 'ru';
     }
     if (dev){
-        var id = i;
-        var info = '<li style="display: flow-root;"><span class="info-reveal-left translate">' + _(dev.conf.model.desc) + ': </span><span class="info-reveal-right translate">' + dev.conf.model.name[_lang] + '</span></li>' +
+        let id = i;
+        let info = '<li style="display: flow-root;"><span class="info-reveal-left translate">' + _(dev.conf.model.desc) + ': </span><span class="info-reveal-right translate">' + dev.conf.model.name[_lang] + '</span></li>' +
             '<li style="display: flow-root;"><span class="info-reveal-left translate">' + _(dev.conf.name.desc) + ': </span><span class="info-reveal-right translate">' + dev.conf.name.val + '</span></li>' +
             '<li style="display: flow-root;"><span class="info-reveal-left translate">' + _(dev.conf.addr.desc) + ': </span><span class="info-reveal-right translate">' + dev.conf.addr.val + '</span></li>';
         for (let key in dev.info) {
             info += '<li style="display: flow-root;"><span class="info-reveal-left ">' + _(dev.info[key].desc) + ': </span><span class="info-reveal-right translate">' + dev.info[key].val + '</span></li>';
         }
-        var config = '';
+        let config = '';
         if (dev.conf.user.val === 1){
             config = 'disabled';
         }
@@ -316,7 +316,7 @@ function selectTypeConn(){
     }
 }
 
-var isAlive = function (){
+let isAlive = function (){
     socket.emit('getState', 'system.adapter.' + namespace + '.alive', function (err, res){
         if (!err && res){
             console.log('isAlive = ' + res.val);
@@ -329,7 +329,7 @@ var isAlive = function (){
 
 function save(callback){
     // example: select elements with class=value and build settings object
-    var obj = {};
+    let obj = {};
     $('.value').each(function (){
         var $this = $(this);
         if ($this.attr('type') === 'checkbox'){
