@@ -9,9 +9,9 @@ nbproject
 
 # npm package files
 iobroker.*.tgz
-
 Thumbs.db
 .eslintrc.json
+.eslintrc.js
 
 # i18n intermediate files
 admin/i18n/flat.txt
