@@ -12,6 +12,29 @@ let adapter, _callback, timeout;
 let devices = [], dataFile = 'devices.json', isPoll = false, isOnline = false, iter = 0, n = 0, firstStart = true,
     pollingTime = 60000, pollingInterval = null;
 
+let parser;
+const Transform = require('stream').Transform;
+class InterByteTimeoutParser extends Transform {
+    constructor (options = { interval: 15 }) {
+        super();
+        this.currentPacket = [];
+        this.interval = options.interval;
+        this.intervalID = -1;
+    }
+    _transform (chunk, encoding, cb) {
+        clearTimeout(this.intervalID);
+        this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
+        for (let offset = 0; offset < chunk.length; offset++) {
+            this.currentPacket.push(chunk[offset]);
+        }
+        cb();
+    }
+    emitPacket () {
+        this.push(Buffer.from(this.currentPacket));
+        this.currentPacket = [];
+    }
+}
+
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 function startAdapter(options){
@@ -235,7 +258,11 @@ function poll(){
 function sendPolling(index, protocol, nameArray, cb){
     if (devices.length > 0){
         //adapter.log.debug('sendPolling - = ' + m.options.protocol[protocol][nameArray][n].desc);
-        msg.cmd = [devices[index].conf.addr.val, m.options.protocol[protocol][nameArray][n].code].concat(m.options.protocol[protocol][nameArray][n].cmd);
+        let addr = devices[index].conf.addr.val;
+        if(protocol === 1){
+            addr = address(devices[index].conf.addr.val);
+        }
+        msg.cmd = [].concat(addr, m.options.protocol[protocol][nameArray][n].code, m.options.protocol[protocol][nameArray][n].cmd);
         adapter.log.debug('Читаем - ' + m.options.protocol[protocol][nameArray][n].desc + '. cmd = ' + JSON.stringify(msg.cmd));
         send(msg, function (response){
             adapter.log.debug('Ответ получен, парсим');
@@ -255,6 +282,12 @@ function sendPolling(index, protocol, nameArray, cb){
         });
     }
 }
+
+let address = function (addrInt){
+    let _addr = Buffer.allocUnsafe(4);
+    _addr.writeUInt32BE(parseInt(addrInt, 10), 0);
+    return Array.prototype.slice.call(_addr, 0);
+};
 
 function findDevice(_msg){
     adapter.log.debug('findDevice msg ---' + JSON.stringify(_msg)); //{"addr":"","model":"230"}
@@ -285,13 +318,12 @@ function findDevice(_msg){
             } else {
                 msg.addr = msg.addr.slice(msg.addr.length - 8, msg.addr.length);
             }
-            let _addr = Buffer.allocUnsafe(4);
-            _addr.writeUInt32BE(parseInt(msg.addr, 10), 0);
-            _addr = Array.prototype.slice.call(_addr, 0);
-            msg.cmd = /*[0x00]*/msg.cmd.concat(_addr, [0x2f]);
+            msg.cmd = /*[0x00]*/msg.cmd.concat(address(msg.addr), [0x2f]);
             adapter.log.debug('Поиск однофазного с адресом - ' + msg.addr);
             send(msg);
         }
+        
+        
         if (msg.protocol === 2){
             if (msg.addr.length > 2){
                 msg.addr = parseInt(msg.addr.substr(msg.addr.length - 3));
@@ -319,8 +351,9 @@ function parseFindPacket(response, msg, cb){ //response, cmd, protocol
     if (msg.protocol === 1){
         adapter.log.debug('Парсим ответ от однофазного счетчика');
         if (response[0] === 0 && response[4] === 47){  //hex 2f //Ответ на поиск 1 фазного
-            const addrInt = response.readUInt32BE(1);
+            const addrInt = response.readUInt32BE(0); //0 14 31 155
             const index = getIndexDevice(addrInt);
+            devices[index] = m.template[msg.protocol];
             devices[index].conf.addr.val = addrInt;
             devices[index].conf.user.val = 2;
             devices[index] = m.template[msg.protocol];
@@ -362,17 +395,18 @@ function parseFindPacket(response, msg, cb){ //response, cmd, protocol
 }
 
 function getDeviceInfo(index, msg, cb){
-    adapter.log.debug('Получаем информацию о счетчике. iter=' + iter);
-    adapter.log.debug('Длинна массива readinfo =' + m.options.protocol[msg.protocol].readinfo.length);
+    adapter.log.debug('Получаем информацию о счетчике. iter = ' + iter);
+    adapter.log.debug('Длинна массива readinfo = ' + m.options.protocol[msg.protocol].readinfo.length);
     msg.cmd = [];
     let addr = [devices[index].conf.addr.val];
     if (msg.protocol === 1){
-        const _addr = Buffer.allocUnsafe(4);
+        let _addr = Buffer.allocUnsafe(4);
         _addr.writeUInt32BE(addr, 0);
-        addr = (Array.prototype.slice.call(_addr, 0)).unshift(0x00);
+        addr = (Array.prototype.slice.call(_addr, 0));//.unshift(0x00);
         adapter.log.debug('Извлекаем адрес однофазного счетчика из серийного номера. addr = ' + JSON.stringify(addr));
     }
-    msg.cmd = msg.cmd.concat(addr, m.options.protocol[msg.protocol].readinfo[iter].code, [m.options.protocol[msg.protocol].readinfo[iter].cmd]);
+    msg.cmd = msg.cmd.concat(addr, m.options.protocol[msg.protocol].readinfo[iter].code, m.options.protocol[msg.protocol].readinfo[iter].cmd);
+    adapter.log.debug('Готовим команду отправки. msg = ' + JSON.stringify(msg));
     send(msg, function (response){
         adapter.log.debug('Ответ получен, парсим пакет - ' + m.options.protocol[msg.protocol].readinfo[iter].desc);
         devices = m.options.protocol[msg.protocol].readinfo[iter].func(devices, index, msg, response);
@@ -390,7 +424,7 @@ function getDeviceInfo(index, msg, cb){
 
 function send(msg, cb){
     mercury._events.data = undefined;
-    //if (serial) serial._events.data = undefined;
+    if (serial) serial._events.data = undefined;
     clearTimeout(timeout);
     timeout = setTimeout(function (){
         adapter.log.error('No response');
@@ -421,11 +455,13 @@ function send(msg, cb){
         });
     } else {
         adapter.log.debug('send serial');
-        serial.on('data', function (response){
+        parser = serial.pipe(new InterByteTimeoutParser({interval:1000}));
+        parser.once('data', function (response){
             clearTimeout(timeout);
             //serial._events.data = null;
             adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
             if (checkCRC(response)){
+                adapter.log.error('Коллбэк в функции send = ' + typeof cb);
                 if (cb){
                     setTimeout(function (){
                         cb(response);
@@ -496,7 +532,7 @@ function connectSerial(){
             return console.log('Error opening port: ', err.message);
         }
     });*/
-
+    
     serial.on('open', function (){
         adapter.log.info('Connected to port ' + adapter.config.usbport);
         adapter.setState('info.connection', true, true);
@@ -517,6 +553,7 @@ function connectSerial(){
     });
     serial.on('error', function (err){
         adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
+        reconnect();
     });
     serial.on('close', function (err){
         adapter.log.debug('serial closed' + JSON.stringify(err));
@@ -530,8 +567,9 @@ function reconnect(){
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
     setTimeout(function (){
-        mercury.removeAllListeners();
-        serial ? connectSerial() :connectTCP();
+        mercury._events.data = undefined;
+        if (serial) serial._events.data = undefined;
+        serial ? connectSerial() : connectTCP();
     }, 10000);
 }
 
