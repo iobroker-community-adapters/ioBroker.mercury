@@ -9,19 +9,21 @@ let serial;
 //let _serial;
 //const InterByteTimeout = require('serialport/parser-inter-byte-timeout');
 let adapter, _callback, timeout;
-let devices = [], dataFile = 'devices.json', isPoll = false, isOnline = false, iter = 0, n = 0, firstStart = true,
-    pollingTime = 60000, pollingInterval = null;
+let devices = [], dataFile = 'devices.json', isPoll = false, isOnline = false, iter = 0, firstStart = true,
+    pollingTime = 60000, pollingInterval = null; //n = 0, 
 
 let parser;
 const Transform = require('stream').Transform;
+
 class InterByteTimeoutParser extends Transform {
-    constructor (options = { interval: 15 }) {
+    constructor(options = {interval: 15}){
         super();
         this.currentPacket = [];
         this.interval = options.interval;
         this.intervalID = -1;
     }
-    _transform (chunk, encoding, cb) {
+
+    _transform(chunk, encoding, cb){
         clearTimeout(this.intervalID);
         this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
         for (let offset = 0; offset < chunk.length; offset++) {
@@ -29,7 +31,8 @@ class InterByteTimeoutParser extends Transform {
         }
         cb();
     }
-    emitPacket () {
+
+    emitPacket(){
         this.push(Buffer.from(this.currentPacket));
         this.currentPacket = [];
     }
@@ -55,13 +58,12 @@ function startAdapter(options){
                 adapter.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
                 id = id.substring(adapter.namespace.length + 1);
                 switch (id) {
-                    case 'states.raw':
-                        const msg = '';
-                        //TODO
-                        send(msg, function (response){
+                    case 'states.raw': //TODO
+                        //const msg = '';
+                        /*send(msg, function (response){
                             adapter.log.debug('Ответ получен - ' + JSON.stringify(response));
                             adapter.setState('raw', {val: JSON.stringify(response), ack: true});
-                        });
+                        });*/
                         break;
                     default:
                 }
@@ -72,7 +74,7 @@ function startAdapter(options){
         },
         message:      obj => {
             if (typeof obj === 'object' && obj.command){
-                //adapter.log.debug(`message ******* ${JSON.stringify(obj)}`);
+                adapter.log.debug(`message ******* ${JSON.stringify(obj)}`);
                 if (obj.command === 'getDevices'){
                     obj.callback && adapter.sendTo(obj.from, obj.command, devices, obj.callback);
                 }
@@ -92,9 +94,11 @@ function startAdapter(options){
                     }
                 }
                 if (obj.command === 'updateDevices'){
-                    if (obj.message.conf.pwd.val !== null){
+                    
+                    if (obj.message.conf.pwd && obj.message.conf.pwd.val !== null){
                         obj.message.conf.pwd.val = obj.message.conf.pwd.val.toString().split('');
                     }
+                    adapter.log.debug('updateDevices');
                     devices[obj.message.index].conf = obj.message.conf;
                     devices[obj.message.index].conf.model.name = m.options.model[obj.message.conf.model.val].desc;
                     saveDevices();
@@ -124,7 +128,7 @@ function setStates(index, name, desc, val){
         adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
         if (err || !state){
             const role = 'state';
-            //adapter.log.debug('setObject = ' + name);
+            adapter.log.debug('setObject = ' + name);
             adapter.setObject(name, {
                 type:   'state',
                 common: {
@@ -137,7 +141,7 @@ function setStates(index, name, desc, val){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
-            adapter.log.debug('state.val = ' + state.val + '/ val = ' + val);
+            adapter.log.debug('state.val = ' + state.val + ' / val = ' + val);
             if (state.val !== val){
                 adapter.setState(name, {val: val, ack: true});
             }
@@ -164,7 +168,7 @@ function setDev(index){
 }
 
 function setObjects(index){
-    adapter.log.debug('- setObjects -');
+    adapter.log.debug('------------ setObjects ---------------');
     let name, val;
     const obj = devices[index].metering;
     let desc = '';
@@ -218,7 +222,7 @@ function setObjects(index){
 
 function poll(){
     if (isPoll){
-        n = 0;
+        iter = 0;
         for (let index = 0; index < devices.length; index++) {
             msg.protocol = devices[index].conf.protocol.val;
             if (msg.protocol === 2){
@@ -245,7 +249,7 @@ function poll(){
             }
         }
         //TODO перенести из sendPolling, выполнять только после опроса всех счетчиков
-        //n = 0;
+        //iter = 0;
         /*if(nameArray === 'first'){
             firstStart = false;
         }
@@ -257,24 +261,25 @@ function poll(){
 
 function sendPolling(index, protocol, nameArray, cb){
     if (devices.length > 0){
-        //adapter.log.debug('sendPolling - = ' + m.options.protocol[protocol][nameArray][n].desc);
+        //adapter.log.debug('sendPolling - = ' + m.options.protocol[protocol][nameArray][iter].desc);
         let addr = devices[index].conf.addr.val;
-        if(protocol === 1){
+        if (protocol === 1){
             addr = address(devices[index].conf.addr.val);
         }
-        msg.cmd = [].concat(addr, m.options.protocol[protocol][nameArray][n].code, m.options.protocol[protocol][nameArray][n].cmd);
-        adapter.log.debug('Читаем - ' + m.options.protocol[protocol][nameArray][n].desc + '. cmd = ' + JSON.stringify(msg.cmd));
+        msg.cmd = [].concat(addr, m.options.protocol[protocol][nameArray][iter].code, m.options.protocol[protocol][nameArray][iter].cmd);
+        adapter.log.debug('-----------------------------------------------------------------------------------------------------');
+        adapter.log.debug('Получаем информацию из массива (' + nameArray + ') - ' + m.options.protocol[protocol][nameArray][iter].desc + '. cmd = ' + JSON.stringify(msg.cmd)  + ' / iter=' + iter);
         send(msg, function (response){
-            adapter.log.debug('Ответ получен, парсим');
-            devices = m.options.protocol[protocol][nameArray][n].func(devices, index, msg.cmd, response);
-            n++;
-            if (n > m.options.protocol[protocol][nameArray].length - 1){
-                n = 0;
+            adapter.log.debug(response.length > 0 ? 'Ответ получен, парсим:' : 'Нет ответа на команду, ситаем следующую.');
+            if (response.length > 0) devices = m.options.protocol[protocol][nameArray][iter].func(devices, index, msg.cmd, response);
+            iter++;
+            if (iter > m.options.protocol[protocol][nameArray].length - 1){
+                iter = 0;
                 if (nameArray === 'first'){
                     firstStart = false;
                 }
                 isPoll = true;
-                adapter.log.debug('Распарсили, пишем состояния.'/* + JSON.stringify(devices)*/);
+                adapter.log.debug('Все данные прочитали, сохраняем полученные данные.'/* + JSON.stringify(devices)*/);
                 setObjects(index);
             } else {
                 sendPolling(index, protocol, nameArray, cb);
@@ -282,12 +287,6 @@ function sendPolling(index, protocol, nameArray, cb){
         });
     }
 }
-
-let address = function (addrInt){
-    let _addr = Buffer.allocUnsafe(4);
-    _addr.writeUInt32BE(parseInt(addrInt, 10), 0);
-    return Array.prototype.slice.call(_addr, 0);
-};
 
 function findDevice(_msg){
     adapter.log.debug('findDevice msg ---' + JSON.stringify(_msg)); //{"addr":"","model":"230"}
@@ -319,11 +318,12 @@ function findDevice(_msg){
                 msg.addr = msg.addr.slice(msg.addr.length - 8, msg.addr.length);
             }
             msg.cmd = /*[0x00]*/msg.cmd.concat(address(msg.addr), [0x2f]);
+            adapter.log.debug('----------------------------------------------------------------------------');
             adapter.log.debug('Поиск однофазного с адресом - ' + msg.addr);
             send(msg);
         }
-        
-        
+
+
         if (msg.protocol === 2){
             if (msg.addr.length > 2){
                 msg.addr = parseInt(msg.addr.substr(msg.addr.length - 3));
@@ -395,20 +395,18 @@ function parseFindPacket(response, msg, cb){ //response, cmd, protocol
 }
 
 function getDeviceInfo(index, msg, cb){
-    adapter.log.debug('Получаем информацию о счетчике. iter = ' + iter);
-    adapter.log.debug('Длинна массива readinfo = ' + m.options.protocol[msg.protocol].readinfo.length);
+    adapter.log.debug('-----------------------------------------------------------------------------------------------------');
     msg.cmd = [];
     let addr = [devices[index].conf.addr.val];
     if (msg.protocol === 1){
-        let _addr = Buffer.allocUnsafe(4);
+        const _addr = Buffer.allocUnsafe(4);
         _addr.writeUInt32BE(addr, 0);
-        addr = (Array.prototype.slice.call(_addr, 0));//.unshift(0x00);
-        adapter.log.debug('Извлекаем адрес однофазного счетчика из серийного номера. addr = ' + JSON.stringify(addr));
+        addr = (Array.prototype.slice.call(_addr, 0));
     }
     msg.cmd = msg.cmd.concat(addr, m.options.protocol[msg.protocol].readinfo[iter].code, m.options.protocol[msg.protocol].readinfo[iter].cmd);
-    adapter.log.debug('Готовим команду отправки. msg = ' + JSON.stringify(msg));
+    adapter.log.debug('Получаем информацию  из массива (readinfo) - ' + m.options.protocol[msg.protocol].readinfo[iter].desc + '. cmd = ' + JSON.stringify(msg.cmd)  + ' / iter=' + iter);
     send(msg, function (response){
-        adapter.log.debug('Ответ получен, парсим пакет - ' + m.options.protocol[msg.protocol].readinfo[iter].desc);
+        adapter.log.debug('Ответ получен, парсим пакет:');
         devices = m.options.protocol[msg.protocol].readinfo[iter].func(devices, index, msg, response);
         iter++;
         if (iter > m.options.protocol[msg.protocol].readinfo.length - 1){
@@ -432,6 +430,7 @@ function send(msg, cb){
         if (serial) serial._events.data = undefined;
         isPoll = true;
         _callback && _callback('No response');
+        cb && cb('');
     }, 5000);
     if (!serial){
         adapter.log.debug('send tcp');
@@ -455,13 +454,13 @@ function send(msg, cb){
         });
     } else {
         adapter.log.debug('send serial');
-        parser = serial.pipe(new InterByteTimeoutParser({interval:1000}));
+        parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
         parser.once('data', function (response){
             clearTimeout(timeout);
             //serial._events.data = null;
             adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
             if (checkCRC(response)){
-                adapter.log.error('Коллбэк в функции send = ' + typeof cb);
+                adapter.log.debug('Коллбэк в функции send = ' + typeof cb);
                 if (cb){
                     setTimeout(function (){
                         cb(response);
@@ -474,6 +473,7 @@ function send(msg, cb){
                 isPoll = true;
                 //cb && cb('CRC Error');
                 _callback && _callback('CRC Error');
+                cb && cb('');
             }
         });
     }
@@ -527,12 +527,6 @@ function main(){
 }
 
 function connectSerial(){
-    /*serial.open(function (err){
-        if (err){
-            return console.log('Error opening port: ', err.message);
-        }
-    });*/
-    
     serial.on('open', function (){
         adapter.log.info('Connected to port ' + adapter.config.usbport);
         adapter.setState('info.connection', true, true);
@@ -544,10 +538,6 @@ function connectSerial(){
             }
         }, pollingTime);
     });
-
-    //_serial = serial.pipe(new InterByteTimeout({interval: 30}));
-    //serial.pipe(_serial);
-
     serial.on('readable', function (){
         adapter.log.debug('readable Data:', serial.read());
     });
@@ -569,7 +559,7 @@ function reconnect(){
     setTimeout(function (){
         mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
-        serial ? connectSerial() : connectTCP();
+        serial ? connectSerial() :connectTCP();
     }, 10000);
 }
 
@@ -630,10 +620,11 @@ const getIndexDevice = function (addr){
 };
 
 function saveDevices(){
+    adapter.log.debug('Сохраняем в файл');
     const data = JSON.stringify(devices, null, 2);
     fs.writeFile(dataFile, data, (err) => {
         if (err) throw err;
-        adapter.log.debug('Devices data written to file');
+        adapter.log.debug('Данные сохранены в файл успешно.');
     });
 }
 
@@ -660,6 +651,12 @@ function listSerial(){
             return {path: 'Not available'};
         });
 }
+
+const address = function (addrInt){
+    const _addr = Buffer.allocUnsafe(4);
+    _addr.writeUInt32BE(parseInt(addrInt, 10), 0);
+    return Array.prototype.slice.call(_addr, 0);
+};
 
 if (module.parent){
     module.exports = startAdapter;

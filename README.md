@@ -32,5 +32,9 @@ The following electricity meters are supported:
 
 ## Changelog
 
+### 0.0.2
+* (instalator) added serial connect
+* (instalator) fixed many error
+
 ### 0.0.1
 * (instalator) initial release
