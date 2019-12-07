@@ -38,9 +38,12 @@ For 1 phase counter - Reading energy for the current month
 32 0F
 ```
 Returns a buffer as a string    
-```"{"type":"Buffer","data":[0,14,31,155,41,3,5,177,243]}"```
+```"{"type":"Buffer","data":[0,14,31,155,50,7,0,99,0,255,255,255,255,255,255,255,255,255,255,255,255,127,86]}"```
 
 ## Changelog
+
+### 0.0.4
+* (instalator) added unit for state
 
 ### 0.0.3
 * (instalator) added object send RAW command

@@ -68,14 +68,12 @@ function startAdapter(options){
                         }
                     };
                     if (isPoll){
+                        adapter.log.debug('RAW - Идет опрос счетчика, добавляем команду в очередь');
                         queueCmd = cmd;
                     } else {
                         sendQueue(cmd);
                     }
                 }
-            } else {
-                // The state was deleted
-                //adapter.log.info(`state ${id} deleted`);
             }
         },
         message:      obj => {
@@ -130,12 +128,13 @@ function startAdapter(options){
     }));
 }
 
-function setStates(index, name, desc, val){
-    if (val > -5 && val < 0) val = 0;
+function setStates(index, name, desc, val, unit){
+    if ((val > -5 && val < 0) || val === null) val = 0;
     adapter.getState(name, function (err, state){
-        adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
+        //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
         if (err || !state){
             const role = 'state';
+            const _unit = unit ? unit : '';
             let type = 'number';
             if (~name.indexOf('RAW')) type = 'string';
             adapter.log.debug('setObject = ' + name);
@@ -145,6 +144,7 @@ function setStates(index, name, desc, val){
                     name: desc,
                     desc: desc,
                     type: type,
+                    unit: _unit,
                     role: role
                 },
                 native: {}
@@ -177,6 +177,7 @@ function setObjects(index){
     let name, val;
     const obj = devices[index].metering;
     let desc = '';
+    let unit = '';
     const prefix = devices[index].info.sn.val;
     setDev(index);
     for (const key1 in obj) {
@@ -200,27 +201,31 @@ function setObjects(index){
                             for (const key4 in obj3) {
                                 if (!Object.hasOwnProperty.call(obj3, key4)) continue;
                                 desc = obj3[key4].desc;
+                                unit = obj3[key4].unit;
                                 val = obj3[key4].val;
                                 name = prefix + '.' + key1 + '.' + key2 + '.' + key3 + '.' + key4;
                                 //adapter.log.debug('key4 = ' + key4 + ' / name = ' + name);
-                                setStates(index, name, desc, val);
+                                setStates(index, name, desc, val, unit);
                             }
                         } else {
                             desc = obj2[key3].desc;
+                            unit = obj2[key3].unit;
                             val = obj2[key3].val;
-                            setStates(index, name, desc, val);
+                            setStates(index, name, desc, val, unit);
                         }
                     }
                 } else {
                     desc = obj1[key2].desc;
+                    unit = obj1[key2].unit;
                     val = obj1[key2].val;
-                    setStates(index, name, desc, val);
+                    setStates(index, name, desc, val, unit);
                 }
             }
         } else {
             desc = obj[key1].desc;
+            unit = obj[key1].unit;
             val = obj[key1].val;
-            setStates(index, name, desc, val);
+            setStates(index, name, desc, val, unit);
         }
     }
 }
@@ -450,14 +455,12 @@ function send(msg, cb){
         parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
         parser.once('data', (response) => {
             clearTimeout(timeout);
-            adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
             checkCRC(response, msg, cb);
         });
     } else {
         adapter.log.debug('send tcp');
         mercury.once('data', (response) => {
             clearTimeout(timeout);
-            adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
             checkCRC(response, msg, cb);
         });
     }
@@ -465,11 +468,12 @@ function send(msg, cb){
     msg.cmd[msg.cmd.length] = (m.crc(msg.cmd) & 0xff);
     msg.cmd[msg.cmd.length] = b1;
     const buf = Buffer.from(msg.cmd);
-    adapter.log.debug('Send cmd - [' + m.toHexString(msg.cmd) + '] to device [' + msg.cmd[0] + ']');
+    adapter.log.debug('Send cmd - [' + m.toHexString(msg.cmd) + ']');
     serial ? serial.write(buf) :mercury.write(buf);
 }
 
 const checkCRC = function (response, msg, cb){
+    adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
     const crc_packet = (response.slice(response.length - 2, response.length)).toJSON().data.toString();
     const crc_calc = [(m.crc(response.slice(0, response.length - 2)) & 0xff), ((m.crc(response.slice(0, response.length - 2)) >> 8) & 0xff)].toString();
     if (crc_packet === crc_calc){
@@ -490,6 +494,7 @@ const checkCRC = function (response, msg, cb){
 };
 
 function main(){
+    //process.on('warning', e => console.warn(e.stack));
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
     pollingTime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 :60000;
