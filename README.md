@@ -10,7 +10,7 @@
 
 **Tests:** [![Travis-CI](http://img.shields.io/travis/instalator/ioBroker.mercury/master.svg)](https://travis-ci.org/instalator/ioBroker.mercury)
 
-## mercury adapter for ioBroker
+## Mercury adapter for ioBroker
 
 Receiving data from electricity meters Mercury.
 Supports TCP / IP and Serial connections.
@@ -30,7 +30,21 @@ The following electricity meters are supported:
 * Mercury-236
 * Mercury-238
 
+## Objects
+**RAW** - sending a  RAW command and receiving a response.  
+Command without address and CRC, bytes separated by space. Expample:  
+For 1 phase counter - Reading energy for the current month
+```
+32 0F
+```
+Returns a buffer as a string    
+```"{"type":"Buffer","data":[0,14,31,155,41,3,5,177,243]}"```
+
 ## Changelog
+
+### 0.0.3
+* (instalator) added object send RAW command
+* (instalator) refactor and fix error
 
 ### 0.0.2
 * (instalator) added serial connect

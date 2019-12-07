@@ -985,7 +985,7 @@ systemDictionary = {
         'it':    'Current transformer ratio',
         'zh-cn': 'Current transformer ratio'
     },
-    'cosfTotal':                                                      {
+    'cosfTotal':                                                                      {
         'en':    'Power factor average',
         'de':    'Power factor average',
         'ru':    'Коэффициент мощности средний',

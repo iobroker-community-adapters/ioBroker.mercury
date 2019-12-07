@@ -1,119 +1,131 @@
 {
-    "common": {
-        "name": "mercury",
-        "version": "0.0.2",
-        "news": {
-            "0.0.2": {
-                "en": "added serial connect\nfixed many error",
-                "de": "added serial connect\nfixed many error",
-                "ru": "added serial connect\nfixed many error",
-                "pt": "added serial connect\nfixed many error",
-                "nl": "added serial connect\nfixed many error",
-                "fr": "added serial connect\nfixed many error",
-                "it": "added serial connect\nfixed many error",
-                "es": "added serial connect\nfixed many error",
-                "pl": "added serial connect\nfixed many error",
-                "zh-cn": "added serial connect\nfixed many error"
-            },
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
-            }
-        },
-        "title": "Mercury electric meter",
-        "titleLang": {
-            "en": "Mercury electric meter",
-            "de": "Quecksilber-Stromzähler",
-            "ru": "Меркурий электросчетчик",
-            "pt": "Medidor elétrico de mercúrio",
-            "nl": "Kwik elektrische meter",
-            "fr": "Compteur électrique à mercure",
-            "it": "Contatore elettrico al mercurio",
-            "es": "Medidor electrico de mercurio",
-            "pl": "Miernik elektryczny rtęci",
-            "zh-cn": "汞电表"
-        },
-        "desc": {
-            "en": "Receiving data from electricity meters Mercury",
-            "de": "Empfangen von Daten von Stromzählern Quecksilber",
-            "ru": "Получение данных от электросчетчиков Меркурий",
-            "pt": "Recebendo dados de contadores de eletricidade Mercury",
-            "nl": "Gegevens ontvangen van elektriciteitsmeters Mercury",
-            "fr": "Réception des données des compteurs d'électricité Mercury",
-            "it": "Ricezione di dati dai contatori elettrici Mercury",
-            "es": "Recepción de datos de medidores de electricidad Mercurio",
-            "pl": "Odbieranie danych z liczników energii elektrycznej Merkury",
-            "zh-cn": "从电表接收数据汞"
-        },
-        "authors": [
-            "instalator <vvvalt@mail.ru>"
-        ],
-        "keywords": [
-            "Mercury",
-            "electric meter"
-        ],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "main.js",
-        "icon": "mercury.png",
-        "enabled": true,
-        "messagebox": true,
-        "extIcon": "https://raw.githubusercontent.com/instalator/ioBroker.mercury/master/admin/mercury.png",
-        "readme": "https://github.com/instalator/ioBroker.mercury/blob/master/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "energy",
-        "compact": true,
-        "materialize": true,
-        "stopBeforeUpdate": true,
-        "dependencies": [
-            {
-                "js-controller": ">=1.4.2"
-            }
-        ]
+  "common": {
+    "name": "mercury",
+    "version": "0.0.3",
+    "news": {
+      "0.0.3": {
+        "en": "added object send RAW command\nrefactor and fix error",
+        "de": "added object send RAW command\nrefactor and fix error",
+        "ru": "added object send RAW command\nrefactor and fix error",
+        "pt": "added object send RAW command\nrefactor and fix error",
+        "nl": "added object send RAW command\nrefactor and fix error",
+        "fr": "added object send RAW command\nrefactor and fix error",
+        "it": "added object send RAW command\nrefactor and fix error",
+        "es": "added object send RAW command\nrefactor and fix error",
+        "pl": "added object send RAW command\nrefactor and fix error",
+        "zh-cn": "added object send RAW command\nrefactor and fix error"
+      },
+      "0.0.2": {
+        "en": "added serial connect\nfixed many error",
+        "de": "added serial connect\nfixed many error",
+        "ru": "added serial connect\nfixed many error",
+        "pt": "added serial connect\nfixed many error",
+        "nl": "added serial connect\nfixed many error",
+        "fr": "added serial connect\nfixed many error",
+        "it": "added serial connect\nfixed many error",
+        "es": "added serial connect\nfixed many error",
+        "pl": "added serial connect\nfixed many error",
+        "zh-cn": "added serial connect\nfixed many error"
+      },
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版"
+      }
     },
-    "native": {
-        "typeconnect": "tcp",
-        "ip": "127.0.0.1",
-        "tcpport": 21,
-        "pollingtime": 60,
-        "usbport": "",
-        "baud": 9600,
-        "parity": false,
-        "timeoutresponse": 1000,
-        "systemtimeout": 60,
-        "factortimeout": 1
+    "title": "Mercury electric meter",
+    "titleLang": {
+      "en": "Mercury electric meter",
+      "de": "Quecksilber-Stromzähler",
+      "ru": "Меркурий электросчетчик",
+      "pt": "Medidor elétrico de mercúrio",
+      "nl": "Kwik elektrische meter",
+      "fr": "Compteur électrique à mercure",
+      "it": "Contatore elettrico al mercurio",
+      "es": "Medidor electrico de mercurio",
+      "pl": "Miernik elektryczny rtęci",
+      "zh-cn": "汞电表"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+    "desc": {
+      "en": "Receiving data from electricity meters Mercury",
+      "de": "Empfangen von Daten von Stromzählern Quecksilber",
+      "ru": "Получение данных от электросчетчиков Меркурий",
+      "pt": "Recebendo dados de contadores de eletricidade Mercury",
+      "nl": "Gegevens ontvangen van elektriciteitsmeters Mercury",
+      "fr": "Réception des données des compteurs d'électricité Mercury",
+      "it": "Ricezione di dati dai contatori elettrici Mercury",
+      "es": "Recepción de datos de medidores de electricidad Mercurio",
+      "pl": "Odbieranie danych z liczników energii elektrycznej Merkury",
+      "zh-cn": "从电表接收数据汞"
+    },
+    "authors": [
+      "instalator <vvvalt@mail.ru>"
+    ],
+    "keywords": [
+      "Mercury",
+      "electric meter"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "main.js",
+    "icon": "mercury.png",
+    "enabled": true,
+    "messagebox": true,
+    "extIcon": "https://raw.githubusercontent.com/instalator/ioBroker.mercury/master/admin/mercury.png",
+    "readme": "https://github.com/instalator/ioBroker.mercury/blob/master/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "energy",
+    "compact": true,
+    "materialize": true,
+    "stopBeforeUpdate": true,
+    "dependencies": [
+      {
+        "js-controller": ">=1.4.2"
+      }
     ]
+  },
+  "native": {
+    "typeconnect": "tcp",
+    "ip": "127.0.0.1",
+    "tcpport": 21,
+    "pollingtime": 60,
+    "usbport": "",
+    "baud": 9600,
+    "parity": false,
+    "timeoutresponse": 1000,
+    "systemtimeout": 60,
+    "factortimeout": 1
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
