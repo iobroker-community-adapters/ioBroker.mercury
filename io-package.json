@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "news": {
+      "0.0.4": {
+        "en": "added unit for state",
+        "de": "added unit for state",
+        "ru": "added unit for state",
+        "pt": "added unit for state",
+        "nl": "added unit for state",
+        "fr": "added unit for state",
+        "it": "added unit for state",
+        "es": "added unit for state",
+        "pl": "added unit for state",
+        "zh-cn": "added unit for state"
+      },
       "0.0.3": {
         "en": "added object send RAW command\nrefactor and fix error",
         "de": "added object send RAW command\nrefactor and fix error",
