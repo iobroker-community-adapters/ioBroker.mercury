@@ -42,6 +42,9 @@ Returns a buffer as a string
 
 ## Changelog
 
+### 0.0.5
+* (instalator) fixed error
+
 ### 0.0.4
 * (instalator) added unit for state
 

@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "news": {
+      "0.0.5": {
+        "en": "fixed error",
+        "de": "fixed error",
+        "ru": "fixed error",
+        "pt": "fixed error",
+        "nl": "fixed error",
+        "fr": "fixed error",
+        "it": "fixed error",
+        "es": "fixed error",
+        "pl": "fixed error",
+        "zh-cn": "fixed error"
+      },
       "0.0.4": {
         "en": "added unit for state",
         "de": "added unit for state",
