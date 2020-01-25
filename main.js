@@ -40,6 +40,10 @@ function startAdapter(options){
         name:         'mercury',
         ready:        main,
         unload:       (callback) => {
+            clearInterval(pollingInterval);
+            clearTimeout(timeout);
+            if(serial) serial.close;
+            if(mercury) mercury.destroy();
             try {
                 adapter.log.debug('cleaned everything up...');
                 callback();
@@ -130,7 +134,7 @@ function startAdapter(options){
 
 function setStates(index, name, desc, val, unit){
     if ((val > -5 && val < 0) || val === null) val = 0;
-    adapter.getState(name, function (err, state){
+    adapter.getObject(name, function (err, state){
         //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
         if (err || !state){
             const role = 'state';
