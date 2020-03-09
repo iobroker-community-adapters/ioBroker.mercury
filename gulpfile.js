@@ -216,6 +216,7 @@ function languagesFlat2words(src) {
             return 0;
         }
     });
+    
     const keys = fs.readFileSync(src + 'i18n/flat.txt').toString().split('\n');
 
     for (const lang of dirs) {
