@@ -1,33 +1,9 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "news": {
-      "0.0.7": {
-        "en": "fixed error",
-        "de": "fixed error",
-        "ru": "fixed error",
-        "pt": "fixed error",
-        "nl": "fixed error",
-        "fr": "fixed error",
-        "it": "fixed error",
-        "es": "fixed error",
-        "pl": "fixed error",
-        "zh-cn": "fixed error"
-      },
-      "0.0.6": {
-        "en": "fixed error",
-        "de": "fixed error",
-        "ru": "fixed error",
-        "pt": "fixed error",
-        "nl": "fixed error",
-        "fr": "fixed error",
-        "it": "fixed error",
-        "es": "fixed error",
-        "pl": "fixed error",
-        "zh-cn": "fixed error"
-      },
-      "0.0.5": {
+      "0.0.8": {
         "en": "fixed error",
         "de": "fixed error",
         "ru": "fixed error",
