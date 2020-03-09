@@ -22,3 +22,4 @@ test_script:
   - 'npm run test:unit'
   - 'npm run test:integration'
 build: 'off'
+
