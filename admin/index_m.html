@@ -56,14 +56,19 @@
                         <input id="ip" type="text" class="value"><label for="ip" class="translate">ip</label>
                     </div>
                     <div class="input-field col s1">
-                        <input id="tcpport" type="text" class="value"><label for="tcpport" class="translate">tcpport</label>
+                        <input id="tcpport" type="number" class="value"><label for="tcpport" class="translate">tcpport</label>
                     </div>
                 </div>
             </div>
             <div id="pollingtime-block" class="row col m12">
                 <div class="col m12">
                     <div class="input-field col s2">
-                        <input id="pollingtime" type="text" class="value"><label for="pollingtime" class="translate">pollingtime</label>
+                        <input id="fastpollingtime" type="number" min="1" class="value"><label for="fastpollingtime" class="translate">fastPollingTime</label>
+                    </div>
+                </div>
+                <div class="col m12">
+                    <div class="input-field col s2">
+                        <input id="slowpollingtime" type="number" min="5000" class="value"><label for="slowpollingtime" class="translate">slowPollingTime</label>
                     </div>
                 </div>
             </div>
