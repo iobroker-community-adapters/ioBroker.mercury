@@ -5,7 +5,7 @@ const net = require('net');
 const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
-const mercury = new net.Socket();
+let mercury = new net.Socket();
 let adapter, _callback, timeout, serial, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     pollingTime, pollingInterval = null, parser, isPoll = false, queueCmd = null;
 
@@ -134,9 +134,9 @@ function startAdapter(options){
 
 function setStates(index, name, desc, val, unit){
     if ((val > -5 && val < 0) || val === null) val = 0;
-    adapter.getObject(name, function (err, state){
+    adapter.getObject(name, function (err, obj){
         //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
-        if (err || !state){
+        if (err || !obj){
             const role = 'state';
             const _unit = unit ? unit : '';
             let type = 'number';
@@ -155,8 +155,10 @@ function setStates(index, name, desc, val, unit){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
-            adapter.log.debug('state.val = ' + state.val + ' / val = ' + val);
-            if (state.val !== val) adapter.setState(name, {val: val, ack: true});
+            adapter.getState(name, function (err, state){
+                adapter.log.debug('setState ' + name + ' state.val = ' + state.val + ' / val = ' + val);
+                if (state.val !== val) adapter.setState(name, {val: val, ack: true});
+            });
         }
     });
 }
@@ -566,7 +568,8 @@ function reconnect(){
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
     setTimeout(() => {
-        mercury._events.data = undefined;
+        mercury = new net.Socket();
+        //mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
         serial ? connectSerial() :connectTCP();
     }, 10000);
@@ -589,7 +592,7 @@ function connectTCP(){
     });
     mercury.on('error', (e) => {
         adapter.log.error('Mercury ERROR: ' + JSON.stringify(e));
-        if (e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL') reconnect();
+        if (e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL' || e.code === 'ECONNRESET' || e.code === 'ENOTFOUND') reconnect();
     });
     mercury.on('end', () => {
         adapter.log.debug('Disconnected from server');
