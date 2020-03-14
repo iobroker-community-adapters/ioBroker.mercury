@@ -349,17 +349,29 @@ systemDictionary = {
         'pl':    'Address or Serial Number',
         'zh-cn': 'Address or Serial Number'
     },
-    'pollingtime':                                                                    {
-        'en':    'Polling period (sec)',
-        'de':    'Polling period (sec)',
-        'ru':    'Период опроса (сек.)',
-        'pt':    'Polling period (sec)',
-        'nl':    'Polling period (sec)',
-        'fr':    'Polling period (sec)',
-        'it':    'Polling period (sec)',
-        'es':    'Polling period (sec)',
-        'pl':    'Polling period (sec)',
-        'zh-cn': 'Polling period (sec)'
+    'slowPollingTime':                                                                    {
+        'en':    'Polling period of non-main parameters (ms)',
+        'de':    'Polling period of non-main parameters (ms)',
+        'ru':    'Период опроса не основных параметров(мс.)',
+        'pt':    'Polling period of non-main parameters (ms)',
+        'nl':    'Polling period of non-main parameters (ms)',
+        'fr':    'Polling period of non-main parameters (ms)',
+        'it':    'Polling period of non-main parameters (ms)',
+        'es':    'Polling period of non-main parameters (ms)',
+        'pl':    'Polling period of non-main parameters (ms)',
+        'zh-cn': 'Polling period of non-main parameters (ms)'
+    },
+    'fastPollingTime':                                                                    {
+        'en':    'Polling period main parameters (ms)',
+        'de':    'Polling period main parameters (ms)',
+        'ru':    'Период опроса основных параметров(мс.)',
+        'pt':    'Polling period main parameters (ms)',
+        'nl':    'Polling period main parameters (ms)',
+        'fr':    'Polling period main parameters (ms)',
+        'it':    'Polling period main parameters (ms)',
+        'es':    'Polling period main parameters (ms)',
+        'pl':    'Polling period main parameters (ms)',
+        'zh-cn': 'Polling period main parameters (ms)'
     },
     'delete the device':                                                              {
         'en':    'Are you sure you want to delete the device?',
