@@ -7,7 +7,7 @@ const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 let mercury = new net.Socket();
 let adapter, _callback, timeout, serial, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
-    fastPollingTime, slowPollingTime, pollingInterval = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
+    fastPollingTime, slowPollingTime, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 class InterByteTimeoutParser extends Transform {
@@ -17,6 +17,7 @@ class InterByteTimeoutParser extends Transform {
         this.interval = options.interval;
         this.intervalID = -1;
     }
+
     _transform(chunk, encoding, cb){
         clearTimeout(this.intervalID);
         this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
@@ -25,6 +26,7 @@ class InterByteTimeoutParser extends Transform {
         }
         cb();
     }
+
     emitPacket(){
         this.push(Buffer.from(this.currentPacket));
         this.currentPacket = [];
@@ -37,11 +39,10 @@ function startAdapter(options){
         name:         'mercury',
         ready:        main,
         unload:       (callback) => {
-            clearInterval(pollingInterval);
             clearTimeout(timeout);
             clearTimeout(timeoutPoll);
-            if(serial) serial.close;
-            if(mercury) mercury.destroy();
+            if (serial) serial.close;
+            if (mercury) mercury.destroy();
             try {
                 adapter.log.debug('cleaned everything up...');
                 callback();
@@ -139,7 +140,7 @@ function poll(){
             adapter.log.debug('Опрашиваем счетчик # ' + index);
             openChannel(index, msg, (e) => {
                 if (!e){
-                    if (endTime - startTime > slowPollingTime) {
+                    if (endTime - startTime > slowPollingTime){
                         startTime = new Date().getTime();
                         nameArray = 'poll';
                     } else {
@@ -391,7 +392,7 @@ function main(){
     //process.on('warning', e => console.warn(e.stack));
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
-    fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :1000;
+    fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :5000;
     slowPollingTime = adapter.config.slowPollingTime ? adapter.config.slowPollingTime :60000;
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
@@ -436,9 +437,6 @@ function connectSerial(){
         adapter.setState('info.connection', true, true);
         pollAllowed = true;
         isOnline = true;
-        /*pollingInterval = setInterval(() => {
-            if (devices && devices.length > 0) poll();
-        }, fastPollingTime);*/
         if (devices && devices.length > 0) poll();
     });
     serial.on('readable', () => {
@@ -474,10 +472,7 @@ function connectTCP(){
         adapter.setState('info.connection', true, true);
         pollAllowed = true;
         isOnline = true;
-        /*pollingInterval = setInterval(() => {
-            if (devices.length > 0) poll();
-        }, fastPollingTime);*/
-        if (devices.length > 0) poll();
+        if (devices && devices.length > 0) poll();
     });
     mercury.on('close', (e) => {
         adapter.log.debug('closed ' + JSON.stringify(e));
@@ -496,7 +491,7 @@ function connectTCP(){
 
 function openChannel(index, msg, cb){
     msg.protocol = index ? devices[index].conf.protocol.val :msg.protocol;
-    if(msg.protocol === 2){
+    if (msg.protocol === 2){
         msg.addr = index ? devices[index].conf.addr.val :msg.addr;
         if (index !== null){
             msg.pwd = devices[index].conf.pwd.val;
@@ -574,10 +569,10 @@ function setStates(index, name, desc, val, unit){
         //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
         if (err || !obj){
             const role = 'state';
-            const _unit = unit ? unit : '';
+            const _unit = unit ? unit :'';
             let type = 'number';
             if (~name.indexOf('RAW')) type = 'string';
-            adapter.log.debug('setObject = ' + name + ' { val = ' + state.val + '}');
+            adapter.log.debug('setObject = ' + name + ' { val = ' + val + '}');
             adapter.setObject(name, {
                 type:   'state',
                 common: {
@@ -592,7 +587,7 @@ function setStates(index, name, desc, val, unit){
             adapter.setState(name, {val: val, ack: true});
         } else {
             adapter.getState(name, function (err, state){
-                if (state.val !== val) {
+                if (state.val !== val){
                     adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
                     adapter.setState(name, {val: val, ack: true});
                 }
