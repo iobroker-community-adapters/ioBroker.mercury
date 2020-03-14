@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.8",
+    "version": "0.0.10",
     "news": {
+      "0.0.10": {
+        "en": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "de": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "ru": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "pt": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "nl": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "fr": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "it": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "es": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "pl": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
+        "zh-cn": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error"
+      },
       "0.0.8": {
         "en": "fixed error",
         "de": "fixed error",
@@ -120,7 +132,8 @@
     "typeconnect": "tcp",
     "ip": "127.0.0.1",
     "tcpport": 21,
-    "pollingtime": 60,
+    "fastpollingtime": 1000,
+    "slowpollingtime": 60000,
     "usbport": "",
     "baud": 9600,
     "parity": false,
