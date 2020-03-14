@@ -7,7 +7,8 @@ const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 let mercury = new net.Socket();
 let adapter, _callback, timeout, serial, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
-    pollingTime, pollingInterval = null, parser, isPoll = false, queueCmd = null;
+    fastPollingTime, slowPollingTime, pollingInterval = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
+const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 class InterByteTimeoutParser extends Transform {
     constructor(options = {interval: 15}){
@@ -16,7 +17,6 @@ class InterByteTimeoutParser extends Transform {
         this.interval = options.interval;
         this.intervalID = -1;
     }
-
     _transform(chunk, encoding, cb){
         clearTimeout(this.intervalID);
         this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
@@ -25,14 +25,11 @@ class InterByteTimeoutParser extends Transform {
         }
         cb();
     }
-
     emitPacket(){
         this.push(Buffer.from(this.currentPacket));
         this.currentPacket = [];
     }
 }
-
-const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 function startAdapter(options){
     return adapter = utils.adapter(Object.assign({}, options, {
@@ -42,6 +39,7 @@ function startAdapter(options){
         unload:       (callback) => {
             clearInterval(pollingInterval);
             clearTimeout(timeout);
+            clearTimeout(timeoutPoll);
             if(serial) serial.close;
             if(mercury) mercury.destroy();
             try {
@@ -102,7 +100,6 @@ function startAdapter(options){
                     }
                 }
                 if (obj.command === 'updateDevices'){
-
                     if (obj.message.conf.pwd && obj.message.conf.pwd.val !== null){
                         obj.message.conf.pwd.val = obj.message.conf.pwd.val.toString().split('');
                     }
@@ -132,147 +129,34 @@ function startAdapter(options){
     }));
 }
 
-function setStates(index, name, desc, val, unit){
-    if ((val > -5 && val < 0) || val === null) val = 0;
-    adapter.getObject(name, function (err, obj){
-        //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
-        if (err || !obj){
-            const role = 'state';
-            const _unit = unit ? unit : '';
-            let type = 'number';
-            if (~name.indexOf('RAW')) type = 'string';
-            adapter.log.debug('setObject = ' + name);
-            adapter.setObject(name, {
-                type:   'state',
-                common: {
-                    name: desc,
-                    desc: desc,
-                    type: type,
-                    unit: _unit,
-                    role: role
-                },
-                native: {}
-            });
-            adapter.setState(name, {val: val, ack: true});
-        } else {
-            adapter.getState(name, function (err, state){
-                adapter.log.debug('setState ' + name + ' state.val = ' + state.val + ' / val = ' + val);
-                if (state.val !== val) adapter.setState(name, {val: val, ack: true});
-            });
-        }
-    });
-}
-
-function setDev(index){
-    const prefix = devices[index].info.sn.val;
-    let img = parseInt(devices[index].conf.model.val);
-    if (img === 230 || img === 231 || img === 234) img = img + '' + devices[index].info.typeCount.val;
-    const icon = 'img/' + img + '.png';
-    adapter.setObjectNotExists(prefix, {
-        type:   'device',
-        common: {name: devices[index].conf.name.val, type: 'counter', icon: icon},
-        native: {id: prefix}
-    }, () => {
-        adapter.extendObject(prefix, {common: {name: devices[index].conf.name.val, type: 'counter', icon: icon}});
-        setStates(index, prefix + '.RAW', 'Send RAW command to counter', '');
-    });
-}
-
-function setObjects(index){
-    adapter.log.debug('------------ setObjects ---------------');
-    let name, val;
-    const obj = devices[index].metering;
-    let desc = '';
-    let unit = '';
-    const prefix = devices[index].info.sn.val;
-    setDev(index);
-    for (const key1 in obj) {
-        if (!Object.hasOwnProperty.call(obj, key1)) continue;
-        name = prefix + '.' + key1;
-        //adapter.log.debug('key1 = ' + key1 + ' / name = ' + name);
-        if (obj[key1]['val'] === undefined){
-            const obj1 = obj[key1];
-            for (const key2 in obj1) {
-                if (!Object.hasOwnProperty.call(obj1, key2)) continue;
-                name = prefix + '.' + key1 + '.' + key2;
-                //adapter.log.debug('key2 = ' + key2 + ' / name = ' + name);
-                if (obj1[key2]['val'] === undefined){
-                    const obj2 = obj1[key2];
-                    for (const key3 in obj2) {
-                        if (!Object.hasOwnProperty.call(obj2, key3)) continue;
-                        name = prefix + '.' + key1 + '.' + key2 + '.' + key3;
-                        //adapter.log.debug('key3 = ' + key3 + ' / name = ' + name);
-                        if (obj2[key3]['val'] === undefined){
-                            const obj3 = obj2[key3];
-                            for (const key4 in obj3) {
-                                if (!Object.hasOwnProperty.call(obj3, key4)) continue;
-                                desc = obj3[key4].desc;
-                                unit = obj3[key4].unit;
-                                val = obj3[key4].val;
-                                name = prefix + '.' + key1 + '.' + key2 + '.' + key3 + '.' + key4;
-                                //adapter.log.debug('key4 = ' + key4 + ' / name = ' + name);
-                                setStates(index, name, desc, val, unit);
-                            }
-                        } else {
-                            desc = obj2[key3].desc;
-                            unit = obj2[key3].unit;
-                            val = obj2[key3].val;
-                            setStates(index, name, desc, val, unit);
-                        }
-                    }
-                } else {
-                    desc = obj1[key2].desc;
-                    unit = obj1[key2].unit;
-                    val = obj1[key2].val;
-                    setStates(index, name, desc, val, unit);
-                }
-            }
-        } else {
-            desc = obj[key1].desc;
-            unit = obj[key1].unit;
-            val = obj[key1].val;
-            setStates(index, name, desc, val, unit);
-        }
-    }
-}
-
 function poll(){
     if (pollAllowed){
         iter = 0;
         isPoll = true;
+        let nameArray = '';
         for (let index = 0; index < devices.length; index++) {
             msg.protocol = devices[index].conf.protocol.val;
-            if (msg.protocol === 2){
-                adapter.log.debug('Опрашиваем счетчик # ' + index);
-                openChannel(index, msg, (e) => {
-                    if (!e){
-                        if (!firstStart){
-                            sendPolling(index, msg.protocol, 'poll');
-                        } else {
-                            pollAllowed = false;
-                            sendPolling(index, msg.protocol, 'first');
-                        }
+            adapter.log.debug('Опрашиваем счетчик # ' + index);
+            openChannel(index, msg, (e) => {
+                if (!e){
+                    if (endTime - startTime > slowPollingTime) {
+                        startTime = new Date().getTime();
+                        nameArray = 'poll';
                     } else {
-                        adapter.log.debug(e);
+                        if (firstStart){
+                            pollAllowed = false;
+                            nameArray = 'first';
+                        } else {
+                            nameArray = 'fastpoll';
+                        }
                     }
-                });
-            } else {
-                if (!firstStart){
-                    sendPolling(index, msg.protocol, 'poll');
+                    adapter.log.debug('slowPollingTime = ' + (endTime - startTime));
+                    sendPolling(index, msg.protocol, nameArray);
                 } else {
-                    pollAllowed = false;
-                    sendPolling(index, msg.protocol, 'first');
+                    adapter.log.debug(e);
                 }
-            }
+            });
         }
-        //TODO перенести из sendPolling, выполнять только после опроса всех счетчиков
-        //iter = 0;
-        /*if(nameArray === 'first'){
-            firstStart = false;
-        }
-        pollAllowed = true;
-        adapter.log.debug('Распарсили, пишем состояния.' + JSON.stringify(devices));
-        setObjects(index);*/
     }
 }
 
@@ -298,6 +182,10 @@ function sendPolling(index, protocol, nameArray, cb){
                     adapter.log.debug('Все данные прочитали, сохраняем полученные данные.'/* + JSON.stringify(devices)*/);
                     isPoll = false;
                     setObjects(index);
+                    timeoutPoll = setTimeout(() => {
+                        endTime = new Date().getTime();
+                        poll();
+                    }, fastPollingTime);
                 } else {
                     sendPolling(index, protocol, nameArray, cb);
                 }
@@ -503,7 +391,8 @@ function main(){
     //process.on('warning', e => console.warn(e.stack));
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
-    pollingTime = adapter.config.pollingtime ? adapter.config.pollingtime * 1000 :60000;
+    fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :1000;
+    slowPollingTime = adapter.config.slowPollingTime ? adapter.config.slowPollingTime :60000;
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
@@ -512,6 +401,22 @@ function main(){
         if (!err){
             try {
                 devices = JSON.parse(data);
+                startTime = new Date().getTime();
+                endTime = new Date().getTime();
+                if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
+                    connectTCP();
+                } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
+                    try {
+                        serial = new SerialPort(adapter.config.usbport, {
+                            baudRate: parseInt(adapter.config.baud, 10),
+                            parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
+                            dataBits: 8
+                        });
+                        connectSerial();
+                    } catch (e) {
+                        adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
+                    }
+                }
             } catch (err) {
                 fs.writeFile(dataFile, '', (err) => {
                     if (err) adapter.log.error('writeFile ERROR = ' + JSON.stringify(err));
@@ -523,20 +428,6 @@ function main(){
             });
         }
     });
-    if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
-        connectTCP();
-    } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
-        try {
-            serial = new SerialPort(adapter.config.usbport, {
-                baudRate: parseInt(adapter.config.baud, 10),
-                parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
-                dataBits: 8
-            });
-            connectSerial();
-        } catch (e) {
-            adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
-        }
-    }
 }
 
 function connectSerial(){
@@ -545,9 +436,10 @@ function connectSerial(){
         adapter.setState('info.connection', true, true);
         pollAllowed = true;
         isOnline = true;
-        pollingInterval = setInterval(() => {
+        /*pollingInterval = setInterval(() => {
             if (devices && devices.length > 0) poll();
-        }, pollingTime);
+        }, fastPollingTime);*/
+        if (devices && devices.length > 0) poll();
     });
     serial.on('readable', () => {
         adapter.log.debug('readable Data:', serial.read());
@@ -582,9 +474,10 @@ function connectTCP(){
         adapter.setState('info.connection', true, true);
         pollAllowed = true;
         isOnline = true;
-        pollingInterval = setInterval(() => {
+        /*pollingInterval = setInterval(() => {
             if (devices.length > 0) poll();
-        }, pollingTime);
+        }, fastPollingTime);*/
+        if (devices.length > 0) poll();
     });
     mercury.on('close', (e) => {
         adapter.log.debug('closed ' + JSON.stringify(e));
@@ -602,22 +495,26 @@ function connectTCP(){
 }
 
 function openChannel(index, msg, cb){
-    msg.addr = index ? devices[index].conf.addr.val :msg.addr;
     msg.protocol = index ? devices[index].conf.protocol.val :msg.protocol;
-    if (index !== null){
-        msg.pwd = devices[index].conf.pwd.val;
-        msg.user = parseInt(devices[index].conf.user.val, 10);
-    }
-    msg.cmd = [msg.addr, 0x01, msg.user].concat(msg.pwd);
-    adapter.log.debug('Открываем канал связи msg = ' + JSON.stringify(msg));
-    send(msg, (response) => {
-        if (response[1] === 0){
-            adapter.log.debug('Канал связи открыт');
-            cb();
-        } else {
-            cb('Error opening communication channel');
+    if(msg.protocol === 2){
+        msg.addr = index ? devices[index].conf.addr.val :msg.addr;
+        if (index !== null){
+            msg.pwd = devices[index].conf.pwd.val;
+            msg.user = parseInt(devices[index].conf.user.val, 10);
         }
-    });
+        msg.cmd = [msg.addr, 0x01, msg.user].concat(msg.pwd);
+        adapter.log.debug('Открываем канал связи msg = ' + JSON.stringify(msg));
+        send(msg, (response) => {
+            if (response[1] === 0){
+                adapter.log.debug('Канал связи открыт');
+                cb();
+            } else {
+                cb('Error opening communication channel');
+            }
+        });
+    } else {
+        cb && cb();
+    }
 }
 
 const getDeviceIndexAtAddr = function (addr){
@@ -670,6 +567,112 @@ const addrToArray = function (addrInt){
     _addr.writeUInt32BE(parseInt(addrInt, 10), 0);
     return Array.prototype.slice.call(_addr, 0);
 };
+
+function setStates(index, name, desc, val, unit){
+    if ((val > -5 && val < 0) || val === null) val = 0;
+    adapter.getObject(name, function (err, obj){
+        //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
+        if (err || !obj){
+            const role = 'state';
+            const _unit = unit ? unit : '';
+            let type = 'number';
+            if (~name.indexOf('RAW')) type = 'string';
+            adapter.log.debug('setObject = ' + name + ' { val = ' + state.val + '}');
+            adapter.setObject(name, {
+                type:   'state',
+                common: {
+                    name: desc,
+                    desc: desc,
+                    type: type,
+                    unit: _unit,
+                    role: role
+                },
+                native: {}
+            });
+            adapter.setState(name, {val: val, ack: true});
+        } else {
+            adapter.getState(name, function (err, state){
+                if (state.val !== val) {
+                    adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
+                    adapter.setState(name, {val: val, ack: true});
+                }
+            });
+        }
+    });
+}
+
+function setDev(index){
+    const prefix = devices[index].info.sn.val;
+    let img = parseInt(devices[index].conf.model.val);
+    if (img === 230 || img === 231 || img === 234) img = img + '' + devices[index].info.typeCount.val;
+    const icon = 'img/' + img + '.png';
+    adapter.setObjectNotExists(prefix, {
+        type:   'device',
+        common: {name: devices[index].conf.name.val, type: 'counter', icon: icon},
+        native: {id: prefix}
+    }, () => {
+        adapter.extendObject(prefix, {common: {name: devices[index].conf.name.val, type: 'counter', icon: icon}});
+        setStates(index, prefix + '.RAW', 'Send RAW command to counter', '');
+    });
+}
+
+function setObjects(index){
+    adapter.log.debug('------------ setObjects -------------');
+    let name, val;
+    const obj = devices[index].metering;
+    let desc = '';
+    let unit = '';
+    const prefix = devices[index].info.sn.val;
+    setDev(index);
+    for (const key1 in obj) {
+        if (!Object.hasOwnProperty.call(obj, key1)) continue;
+        name = prefix + '.' + key1;
+        //adapter.log.debug('key1 = ' + key1 + ' / name = ' + name);
+        if (obj[key1]['val'] === undefined){
+            const obj1 = obj[key1];
+            for (const key2 in obj1) {
+                if (!Object.hasOwnProperty.call(obj1, key2)) continue;
+                name = prefix + '.' + key1 + '.' + key2;
+                //adapter.log.debug('key2 = ' + key2 + ' / name = ' + name);
+                if (obj1[key2]['val'] === undefined){
+                    const obj2 = obj1[key2];
+                    for (const key3 in obj2) {
+                        if (!Object.hasOwnProperty.call(obj2, key3)) continue;
+                        name = prefix + '.' + key1 + '.' + key2 + '.' + key3;
+                        //adapter.log.debug('key3 = ' + key3 + ' / name = ' + name);
+                        if (obj2[key3]['val'] === undefined){
+                            const obj3 = obj2[key3];
+                            for (const key4 in obj3) {
+                                if (!Object.hasOwnProperty.call(obj3, key4)) continue;
+                                desc = obj3[key4].desc;
+                                unit = obj3[key4].unit;
+                                val = obj3[key4].val;
+                                name = prefix + '.' + key1 + '.' + key2 + '.' + key3 + '.' + key4;
+                                //adapter.log.debug('key4 = ' + key4 + ' / name = ' + name);
+                                setStates(index, name, desc, val, unit);
+                            }
+                        } else {
+                            desc = obj2[key3].desc;
+                            unit = obj2[key3].unit;
+                            val = obj2[key3].val;
+                            setStates(index, name, desc, val, unit);
+                        }
+                    }
+                } else {
+                    desc = obj1[key2].desc;
+                    unit = obj1[key2].unit;
+                    val = obj1[key2].val;
+                    setStates(index, name, desc, val, unit);
+                }
+            }
+        } else {
+            desc = obj[key1].desc;
+            unit = obj[key1].unit;
+            val = obj[key1].val;
+            setStates(index, name, desc, val, unit);
+        }
+    }
+}
 
 if (module.parent){
     module.exports = startAdapter;
