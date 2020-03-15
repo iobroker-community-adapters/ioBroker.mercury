@@ -390,6 +390,7 @@ const checkCRC = function (response, msg, cb){
 
 function main(){
     //process.on('warning', e => console.warn(e.stack));
+    
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
     fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :5000;
@@ -402,22 +403,6 @@ function main(){
         if (!err){
             try {
                 devices = JSON.parse(data);
-                startTime = new Date().getTime();
-                endTime = new Date().getTime();
-                if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
-                    connectTCP();
-                } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
-                    try {
-                        serial = new SerialPort(adapter.config.usbport, {
-                            baudRate: parseInt(adapter.config.baud, 10),
-                            parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
-                            dataBits: 8
-                        });
-                        connectSerial();
-                    } catch (e) {
-                        adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
-                    }
-                }
             } catch (err) {
                 fs.writeFile(dataFile, '', (err) => {
                     if (err) adapter.log.error('writeFile ERROR = ' + JSON.stringify(err));
@@ -427,6 +412,28 @@ function main(){
             fs.writeFile(dataFile, '', (err) => {
                 if (err) adapter.log.error('writeFile ERROR = ' + JSON.stringify(err));
             });
+        }
+        startTime = new Date().getTime();
+        endTime = new Date().getTime();
+        m.on('debug', (txt) => {
+            adapter.log.debug('* ' + txt);
+        });
+        m.on('info', (txt) => {
+            adapter.log.info('* ' + txt);
+        });
+        if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
+            connectTCP();
+        } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
+            try {
+                serial = new SerialPort(adapter.config.usbport, {
+                    baudRate: parseInt(adapter.config.baud, 10),
+                    parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
+                    dataBits: 8
+                });
+                connectSerial();
+            } catch (e) {
+                adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
+            }
         }
     });
 }
