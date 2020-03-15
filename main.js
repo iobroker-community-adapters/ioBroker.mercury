@@ -593,8 +593,8 @@ function setStates(index, name, desc, val, unit){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
-            if(obj.common.desc !== desc){
-                adapter.extendObject(name, {common: {name: desc, desc: desc}});
+            if(obj.common.desc !== desc || obj.common.unit !== unit){
+                adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
                 if (state.val !== val){
