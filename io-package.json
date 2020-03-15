@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.10",
+    "version": "0.0.11",
     "news": {
+      "0.0.11": {
+        "en": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "de": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "ru": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "pt": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "nl": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "fr": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "it": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "es": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "pl": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
+        "zh-cn": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error"
+      },
       "0.0.10": {
         "en": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
         "de": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
