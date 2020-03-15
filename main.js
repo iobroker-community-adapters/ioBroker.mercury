@@ -593,6 +593,9 @@ function setStates(index, name, desc, val, unit){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
+            if(obj.common.desc !== desc){
+                adapter.extendObject(name, {common: {name: desc, desc: desc}});
+            }
             adapter.getState(name, function (err, state){
                 if (state.val !== val){
                     adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
