@@ -180,7 +180,7 @@ function sendPolling(index, protocol, nameArray, cb){
                         sendQueue(queueCmd);
                     }
                     pollAllowed = true;
-                    adapter.log.debug('Все данные прочитали, сохраняем полученные данные.'/* + JSON.stringify(devices)*/);
+                    adapter.log.debug('# Все данные прочитали, сохраняем полученные данные. #'/* + JSON.stringify(devices)*/);
                     isPoll = false;
                     setObjects(index);
                     timeoutPoll = setTimeout(() => {
@@ -390,7 +390,7 @@ const checkCRC = function (response, msg, cb){
 
 function main(){
     //process.on('warning', e => console.warn(e.stack));
-    
+
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
     fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :5000;
@@ -459,19 +459,6 @@ function connectSerial(){
     });
 }
 
-function reconnect(){
-    pollAllowed = false;
-    isOnline = false;
-    adapter.setState('info.connection', false, true);
-    adapter.log.debug('Mercury reconnect after 10 seconds');
-    setTimeout(() => {
-        mercury = new net.Socket();
-        //mercury._events.data = undefined;
-        if (serial) serial._events.data = undefined;
-        serial ? connectSerial() :connectTCP();
-    }, 10000);
-}
-
 function connectTCP(){
     adapter.log.debug('Connect to ' + adapter.config.ip + ':' + adapter.config.tcpport);
     mercury.connect({host: adapter.config.ip, port: adapter.config.tcpport}, () => {
@@ -494,6 +481,19 @@ function connectTCP(){
         reconnect();
         _callback && _callback('Disconnected from server');
     });
+}
+
+function reconnect(){
+    pollAllowed = false;
+    isOnline = false;
+    adapter.setState('info.connection', false, true);
+    adapter.log.debug('Mercury reconnect after 10 seconds');
+    setTimeout(() => {
+        mercury = new net.Socket();
+        //mercury._events.data = undefined;
+        if (serial) serial._events.data = undefined;
+        serial ? connectSerial() :connectTCP();
+    }, 10000);
 }
 
 function openChannel(index, msg, cb){
@@ -530,7 +530,6 @@ const getDeviceIndexAtAddr = function (addr){
         return devices.length;
     }
 };
-
 const getDeviceIndexAtSn = function (s){
     let index = null;
     devices.some((item, i) => {
@@ -593,12 +592,12 @@ function setStates(index, name, desc, val, unit){
             });
             adapter.setState(name, {val: val, ack: true});
         } else {
-            if(obj.common.desc !== desc || obj.common.unit !== unit){
+            if (obj.common.desc !== desc || obj.common.unit !== unit){
                 adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
+                adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
                 if (state.val !== val){
-                    adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
                     adapter.setState(name, {val: val, ack: true});
                 }
             });
