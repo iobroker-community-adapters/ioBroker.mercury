@@ -137,7 +137,7 @@ function poll(){
         let nameArray = '';
         for (let index = 0; index < devices.length; index++) {
             msg.protocol = devices[index].conf.protocol.val;
-            adapter.log.debug('Опрашиваем счетчик # ' + index);
+            adapter.log.debug('Опрашиваем счетчик # ' + index + ' с адресом: ' + devices[index].conf.addr.val);
             openChannel(index, msg, (e) => {
                 if (!e){
                     if (endTime - startTime > slowPollingTime){
