@@ -6,7 +6,8 @@ const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 //let mercury = new net.Socket();
-let adapter, _callback, timeout, serial, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
+let mercury, serial;
+let adapter, _callback, timeout, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
