@@ -396,6 +396,10 @@ function main(){
     adapter.subscribeStates('*');
     fastPollingTime = adapter.config.fastpollingtime ? adapter.config.fastpollingtime :5000;
     slowPollingTime = adapter.config.slowpollingtime ? adapter.config.slowpollingtime :60000;
+    startTime = new Date().getTime();
+    endTime = new Date().getTime();
+    m.on('debug', (txt) => {adapter.log.debug('* ' + txt);});
+    m.on('info', (txt) => {adapter.log.info('* ' + txt);});
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
@@ -421,14 +425,6 @@ function main(){
 }
 
 function connect(){
-        startTime = new Date().getTime();
-        endTime = new Date().getTime();
-        m.on('debug', (txt) => {
-            adapter.log.debug('* ' + txt);
-        });
-        m.on('info', (txt) => {
-            adapter.log.info('* ' + txt);
-        });
         if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
             connectTCP();
         } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
