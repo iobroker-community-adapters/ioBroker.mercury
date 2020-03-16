@@ -5,7 +5,7 @@ const net = require('net');
 const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
-let mercury = new net.Socket();
+//let mercury = new net.Socket();
 let adapter, _callback, timeout, serial, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
@@ -403,16 +403,23 @@ function main(){
         if (!err){
             try {
                 devices = JSON.parse(data);
+                connect();
             } catch (err) {
                 fs.writeFile(dataFile, '', (err) => {
                     if (err) adapter.log.error('writeFile ERROR = ' + JSON.stringify(err));
+                    connect();
                 });
             }
         } else {
             fs.writeFile(dataFile, '', (err) => {
                 if (err) adapter.log.error('writeFile ERROR = ' + JSON.stringify(err));
+                connect();
             });
         }
+    });
+}
+
+function connect(){
         startTime = new Date().getTime();
         endTime = new Date().getTime();
         m.on('debug', (txt) => {
@@ -424,43 +431,43 @@ function main(){
         if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
             connectTCP();
         } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
-            try {
-                serial = new SerialPort(adapter.config.usbport, {
-                    baudRate: parseInt(adapter.config.baud, 10),
-                    parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
-                    dataBits: 8
-                });
-                connectSerial();
-            } catch (e) {
-                adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
-            }
+            connectSerial();
         }
-    });
 }
 
 function connectSerial(){
-    serial.on('open', () => {
-        adapter.log.info('Connected to port ' + adapter.config.usbport);
-        adapter.setState('info.connection', true, true);
-        pollAllowed = true;
-        isOnline = true;
-        if (devices && devices.length > 0) poll();
-    });
-    serial.on('readable', () => {
-        adapter.log.debug('readable Data:', serial.read());
-    });
-    serial.on('error', (err) => {
-        adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
-        reconnect();
-    });
-    serial.on('close', (err) => {
-        adapter.log.debug('serial closed' + JSON.stringify(err));
-        //reconnect();
-    });
+    try {
+         serial = new SerialPort(adapter.config.usbport, {
+            baudRate: parseInt(adapter.config.baud, 10),
+            parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
+            dataBits: 8
+        });
+        serial.on('open', () => {
+            adapter.log.info('Connected to port ' + adapter.config.usbport);
+            adapter.setState('info.connection', true, true);
+            pollAllowed = true;
+            isOnline = true;
+            if (devices && devices.length > 0) poll();
+        });
+        serial.on('readable', () => {
+            adapter.log.debug('readable Data:', serial.read());
+        });
+        serial.on('error', (err) => {
+            adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
+            reconnect();
+        });
+        serial.on('close', (err) => {
+            adapter.log.debug('serial closed' + JSON.stringify(err));
+            //reconnect();
+        });
+    } catch (e) {
+        adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
+    }
 }
 
 function connectTCP(){
     adapter.log.debug('Connect to ' + adapter.config.ip + ':' + adapter.config.tcpport);
+    mercury = new net.Socket();
     mercury.connect({host: adapter.config.ip, port: adapter.config.tcpport}, () => {
         adapter.log.info('Connected to server ' + adapter.config.ip + ':' + adapter.config.tcpport);
         adapter.setState('info.connection', true, true);
@@ -489,9 +496,8 @@ function reconnect(){
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
     setTimeout(() => {
-        mercury = new net.Socket();
         //mercury._events.data = undefined;
-        if (serial) serial._events.data = undefined;
+        //if (serial) serial._events.data = undefined;
         serial ? connectSerial() :connectTCP();
     }, 10000);
 }
