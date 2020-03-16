@@ -393,8 +393,8 @@ function main(){
 
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
-    fastPollingTime = adapter.config.fastPollingTime ? adapter.config.fastPollingTime :5000;
-    slowPollingTime = adapter.config.slowPollingTime ? adapter.config.slowPollingTime :60000;
+    fastPollingTime = adapter.config.fastpollingtime ? adapter.config.fastpollingtime :5000;
+    slowPollingTime = adapter.config.slowpollingtime ? adapter.config.slowpollingtime :60000;
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
