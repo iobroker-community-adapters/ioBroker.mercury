@@ -5,7 +5,6 @@ const net = require('net');
 const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
-//let mercury = new net.Socket();
 let mercury, serial;
 let adapter, _callback, timeout, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
@@ -398,8 +397,12 @@ function main(){
     slowPollingTime = adapter.config.slowpollingtime ? adapter.config.slowpollingtime :60000;
     startTime = new Date().getTime();
     endTime = new Date().getTime();
-    m.on('debug', (txt) => {adapter.log.debug('* ' + txt);});
-    m.on('info', (txt) => {adapter.log.info('* ' + txt);});
+    m.on('debug', (txt) => {
+        adapter.log.debug('* ' + txt);
+    });
+    m.on('info', (txt) => {
+        adapter.log.info('* ' + txt);
+    });
     const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
     dataFile = dir + dataFile;
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
@@ -425,16 +428,16 @@ function main(){
 }
 
 function connect(){
-        if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
-            connectTCP();
-        } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
-            connectSerial();
-        }
+    if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
+        connectTCP();
+    } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
+        connectSerial();
+    }
 }
 
 function connectSerial(){
     try {
-         serial = new SerialPort(adapter.config.usbport, {
+        serial = new SerialPort(adapter.config.usbport, {
             baudRate: parseInt(adapter.config.baud, 10),
             parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
             dataBits: 8
