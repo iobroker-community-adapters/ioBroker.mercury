@@ -42,7 +42,7 @@ Returns a buffer as a string
 
 ## Changelog
 
-### 0.0.12
+### 0.0.13
 * (SanSanysch) translate
 * (instalator) added translate
 * (instalator) added temperature, frequency, full power
