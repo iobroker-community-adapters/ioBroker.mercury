@@ -1,9 +1,9 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.12",
+    "version": "0.0.13",
     "news": {
-      "0.0.12": {
+      "0.0.13": {
         "en": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
         "de": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
         "ru": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
