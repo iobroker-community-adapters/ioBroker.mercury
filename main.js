@@ -7,7 +7,7 @@ const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 let mercury, serial;
 let adapter, _callback, timeout, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
-    fastPollingTime, slowPollingTime, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
+    fastPollingTime, slowPollingTime, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 class InterByteTimeoutParser extends Transform {
@@ -41,6 +41,8 @@ function startAdapter(options){
         unload:       (callback) => {
             clearTimeout(timeout);
             clearTimeout(timeoutPoll);
+            clearTimeout(CRCTimeOut);
+            clearTimeout(reconnectTimeOut);
             if (serial) serial.close;
             if (mercury) mercury.destroy();
             try {
@@ -374,7 +376,7 @@ const checkCRC = function (response, msg, cb){
     if (crc_packet === crc_calc){
         adapter.log.debug('CRC check packet successfully - CRC packet(' + JSON.stringify(crc_packet) + ') = CRC calc(' + JSON.stringify(crc_calc) + ')');
         if (cb){
-            setTimeout(() => {
+            CRCTimeOut = setTimeout(() => {
                 cb(response);
             }, 100);
         } else {
@@ -495,7 +497,7 @@ function reconnect(){
     isOnline = false;
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
-    setTimeout(() => {
+    reconnectTimeOut = setTimeout(() => {
         //mercury._events.data = undefined;
         //if (serial) serial._events.data = undefined;
         serial ? connectSerial() :connectTCP();
