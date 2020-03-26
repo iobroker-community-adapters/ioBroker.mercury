@@ -42,6 +42,12 @@ Returns a buffer as a string
 
 ## Changelog
 
+### 0.0.12
+* (SanSanysch) translate
+* (instalator) added translate
+* (instalator) added temperature, frequency, full power
+* (instalator) fix error
+
 ### 0.0.11
 * (instalator) added translate function (PLEASE HELP WITH THE TRANSLATION)
 * (instalator) fix error
