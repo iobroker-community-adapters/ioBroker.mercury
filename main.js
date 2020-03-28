@@ -606,9 +606,11 @@ function setStates(index, name, desc, val, unit){
                 adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
-                adapter.log.debug('setState ' + name + ' { oldVal = ' + state.val + ' / newVal = ' + val + ' }');
-                if (state.val !== val){
+                if (state.val === val) {
+                    adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' = newVal: ' + val + ' }');
+                } else if (state.val !== val){
                     adapter.setState(name, {val: val, ack: true});
+                    adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' != newVal: ' + val + ' }');
                 }
             });
         }
