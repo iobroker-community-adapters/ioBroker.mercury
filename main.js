@@ -6,8 +6,8 @@ const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 let mercury, serial;
-let adapter, _callback, timeout, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
-    fastPollingTime, slowPollingTime, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
+let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
+    fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 class InterByteTimeoutParser extends Transform {
@@ -498,8 +498,8 @@ function reconnect(){
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
     reconnectTimeOut = setTimeout(() => {
-        //mercury._events.data = undefined;
-        //if (serial) serial._events.data = undefined;
+        if (mercury) mercury._events.data = undefined;
+        if (serial) serial._events.data = undefined;
         serial ? connectSerial() :connectTCP();
     }, 10000);
 }
@@ -515,11 +515,13 @@ function openChannel(index, msg, cb){
         msg.cmd = [msg.addr, 0x01, msg.user].concat(msg.pwd);
         adapter.log.debug('Открываем канал связи msg = ' + JSON.stringify(msg));
         send(msg, (response) => {
-            if (response[1] === 0){
+            if (response.length === 4 && response[1] === 0){ 
                 adapter.log.debug('Канал связи открыт');
                 cb();
             } else {
-                cb('Error opening communication channel');
+                adapter.log.debug('Error: opening communication channel');
+                reconnect();
+                //cb('Error opening communication channel');
             }
         });
     } else {
