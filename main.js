@@ -336,12 +336,12 @@ function getDeviceInfo(index, msg, cb){
 }
 
 function send(msg, cb){
-    mercury._events.data = undefined;
+    if (mercury) mercury._events.data = undefined;
     if (serial) serial._events.data = undefined;
     clearTimeout(timeout);
     timeout = setTimeout(() => {
         adapter.log.error('No response');
-        mercury._events.data = undefined;
+        if (mercury) mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
         pollAllowed = true;
         _callback && _callback('No response');
