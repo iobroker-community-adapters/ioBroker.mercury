@@ -352,7 +352,7 @@ systemDictionary = {
     'slowPollingTime':                                                                    {
         'en':    'Polling period of non-main parameters (ms)',
         'de':    'Der Zeitraum der Umfrage ist nicht der Hauptparameter (ms)',
-        'ru':    'Период опроса не основных параметров (мс)',
+        'ru':    'Интервал между опросом не основных параметров (мс)',
         'pt':    'Período de votação de parâmetros não principais (ms)',
         'nl':    'De periode van de enquête is niet de belangrijkste parameter (ms)',
         'fr':    'La période de l\'enquête n\'est pas les principaux paramètres (ms)',
@@ -364,7 +364,7 @@ systemDictionary = {
     'fastPollingTime':                                                                    {
         'en':    'Polling period main parameters (ms)',
         'de':    'Der Erhebungszeitraum der Hauptparameter (ms)',
-        'ru':    'Период опроса основных параметров (мс)',
+        'ru':    'Интервал между опросом основных параметров (мс)',
         'pt':    'O período da pesquisa dos principais parâmetros (ms)',
         'nl':    'De onderzoeksperiode van de belangrijkste parameters (ms)',
         'fr':    'La période d\'enquête des principaux paramètres (ms)',

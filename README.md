@@ -42,8 +42,8 @@ Returns a buffer as a string
 
 ## Changelog
 
-### 0.0.14
-* (instalator) fix error
+### 0.0.15
+* (instalator) fixed error Power
 
 ### 0.0.13
 * (SanSanysch) translate

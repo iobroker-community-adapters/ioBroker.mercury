@@ -1,19 +1,19 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.14",
+    "version": "0.0.15",
     "news": {
-      "0.0.14": {
-        "en": "fixed error",
-        "de": "fixed error",
-        "ru": "fixed error",
-        "pt": "fixed error",
-        "nl": "fixed error",
-        "fr": "fixed error",
-        "it": "fixed error",
-        "es": "fixed error",
-        "pl": "fixed error",
-        "zh-cn": "fixed error"
+      "0.0.15": {
+        "en": "fixed error Power",
+        "de": "fixed error Power",
+        "ru": "fixed error Power",
+        "pt": "fixed error Power",
+        "nl": "fixed error Power",
+        "fr": "fixed error Power",
+        "it": "fixed error Power",
+        "es": "fixed error Power",
+        "pl": "fixed error Power",
+        "zh-cn": "fixed error Power"
       },
       "0.0.13": {
         "en": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
