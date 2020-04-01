@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.0.15",
+    "version": "0.1.0",
     "news": {
+      "0.1.0": {
+        "en": "beta",
+        "de": "beta",
+        "ru": "beta",
+        "pt": "beta",
+        "nl": "beta",
+        "fr": "beta",
+        "it": "beta",
+        "es": "beta",
+        "pl": "beta",
+        "zh-cn": "beta"
+      },
       "0.0.15": {
         "en": "fixed error Power",
         "de": "fixed error Power",

@@ -42,6 +42,9 @@ Returns a buffer as a string
 
 ## Changelog
 
+### 0.1.0
+* (instalator) beta
+
 ### 0.0.15
 * (instalator) fixed error Power
 
