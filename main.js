@@ -391,8 +391,6 @@ const checkCRC = function (response, msg, cb){
 };
 
 function main(){
-    //process.on('warning', e => console.warn(e.stack));
-
     if (!adapter.systemConfig) return;
     adapter.subscribeStates('*');
     fastPollingTime = adapter.config.fastpollingtime ? adapter.config.fastpollingtime :5000;
