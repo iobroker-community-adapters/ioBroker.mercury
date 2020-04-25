@@ -483,7 +483,7 @@ function connectTCP(){
     });
     mercury.on('error', (e) => {
         adapter.log.error('Mercury ERROR: ' + JSON.stringify(e));
-        if (e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL' || e.code === 'ECONNRESET' || e.code === 'ENOTFOUND') reconnect();
+        if (!e || e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL' || e.code === 'ECONNRESET' || e.code === 'ENOTFOUND') reconnect();
     });
     mercury.on('end', () => {
         adapter.log.debug('Disconnected from server');
