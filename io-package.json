@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "de": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "ru": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "pt": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "nl": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "fr": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "it": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "es": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "pl": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
+        "zh-cn": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring"
+      },
       "0.1.0": {
         "en": "beta",
         "de": "beta",
