@@ -93,11 +93,13 @@ function findeDevice(){
         }, 15000);
         sendTo(namespace, 'findDevice', {addr, model, user, pwd}, function (msg){
             window.parent.$('#connecting').hide();
-            //console.log('/////findeDevice///msg/// ' + JSON.stringify(msg));
+            console.log('/////findeDevice///msg/// ' + JSON.stringify(msg));
             clearTimeout(timer);
             if (msg){
                 if (msg.error){
+                    console.log('/////findeDevice///msg.error/// ' + JSON.stringify(msg.error));
                     showMessage(_(msg.error), _('Error'), 'error_outline');
+                    msg = null;
                 } else {
                     devices = msg;
                     $('.modal').modal('close');

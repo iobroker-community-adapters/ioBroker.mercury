@@ -342,7 +342,7 @@ function send(msg, cb){
     timeout = setTimeout(() => {
         adapter.log.error('No response');
         if (mercury) mercury._events.data = undefined;
-        if (serial) serial._events.data = undefined;
+        //if (serial) serial._events.data = undefined;
         pollAllowed = true;
         _callback && _callback('No response');
         cb && cb('');
@@ -431,17 +431,30 @@ function connect(){
     if (adapter.config.typeconnect === 'tcp' && adapter.config.ip && adapter.config.tcpport){
         connectTCP();
     } else if (adapter.config.typeconnect === 'usb' && adapter.config.usbport){
+        serial = new SerialPort(adapter.config.usbport, {
+            baudRate:   parseInt(adapter.config.baud, 10),
+            parity:     adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
+            dataBits:   8,
+            endOnClose: true,
+            autoOpen:   false
+        });
         connectSerial();
     }
 }
 
+function openSerialPort(){
+    serial.open((err) => {
+        if (err){
+            adapter.log.error('serial open ' + adapter.config.usbport + ' ERROR: ' + err.message);
+            reconnect();
+        } else {
+            return;
+        }
+    });
+}
+
 function connectSerial(){
     try {
-        serial = new SerialPort(adapter.config.usbport, {
-            baudRate: parseInt(adapter.config.baud, 10),
-            parity:   adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
-            dataBits: 8
-        });
         serial.on('open', () => {
             adapter.log.info('Connected to port ' + adapter.config.usbport);
             adapter.setState('info.connection', true, true);
@@ -453,16 +466,21 @@ function connectSerial(){
             adapter.log.debug('readable Data:', serial.read());
         });
         serial.on('error', (err) => {
-            adapter.log.error('Serial ERROR: ' + JSON.stringify(err));
-            reconnect();
+            if(!serial.isOpen){
+                adapter.log.error('Serial ' + adapter.config.usbport + ' ERROR: ' + err.message);
+            }
+            //reconnect();
         });
         serial.on('close', (err) => {
-            adapter.log.debug('serial closed' + JSON.stringify(err));
-            //reconnect();
+            if(err){
+                adapter.log.debug('serial closed: ' + err.message);
+                reconnect();
+            }
         });
     } catch (e) {
         adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
     }
+    openSerialPort();
 }
 
 function connectTCP(){
@@ -497,8 +515,9 @@ function reconnect(){
     adapter.log.debug('Mercury reconnect after 10 seconds');
     reconnectTimeOut = setTimeout(() => {
         if (mercury) mercury._events.data = undefined;
-        if (serial) serial._events.data = undefined;
-        serial ? connectSerial() :connectTCP();
+        //if (serial) serial._events.data = undefined;
+        serial && serial.close();
+        serial ? openSerialPort() :connectTCP();
     }, 10000);
 }
 
@@ -513,12 +532,13 @@ function openChannel(index, msg, cb){
         msg.cmd = [msg.addr, 0x01, msg.user].concat(msg.pwd);
         adapter.log.debug('Открываем канал связи msg = ' + JSON.stringify(msg));
         send(msg, (response) => {
-            if (response.length === 4 && response[1] === 0){ 
+            if (response.length === 4 && response[1] === 0){
                 adapter.log.debug('Канал связи открыт');
                 cb();
             } else {
                 adapter.log.debug('Error: opening communication channel');
-                reconnect();
+                //reconnect();
+                cb && cb();
                 //cb('Error opening communication channel');
             }
         });
@@ -604,7 +624,7 @@ function setStates(index, name, desc, val, unit){
                 adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
-                if (state.val === val) {
+                if (state.val === val){
                     adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' = newVal: ' + val + ' }');
                 } else if (state.val !== val){
                     adapter.setState(name, {val: val, ack: true});
