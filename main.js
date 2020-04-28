@@ -156,7 +156,7 @@ function poll(){
                     adapter.log.debug('slowPollingTime = ' + (endTime - startTime));
                     sendPolling(index, msg.protocol, nameArray);
                 } else {
-                    adapter.log.debug(e);
+                    adapter.log.error(e);
                 }
             });
         }
@@ -337,7 +337,7 @@ function getDeviceInfo(index, msg, cb){
 
 function send(msg, cb){
     if (mercury) mercury._events.data = undefined;
-    if (serial) serial._events.data = undefined;
+    //if (serial) serial._events.data = undefined;
     clearTimeout(timeout);
     timeout = setTimeout(() => {
         adapter.log.error('No response');
@@ -466,16 +466,16 @@ function connectSerial(){
             adapter.log.debug('readable Data:', serial.read());
         });
         serial.on('error', (err) => {
-            if(!serial.isOpen){
-                adapter.log.error('Serial ' + adapter.config.usbport + ' ERROR: ' + err.message);
-            }
+            //if(!serial.isOpen){
+            adapter.log.error('Serial ' + adapter.config.usbport + ' ERROR: ' + err.message);
+            //}
             //reconnect();
         });
         serial.on('close', (err) => {
             if(err){
                 adapter.log.debug('serial closed: ' + err.message);
-                reconnect();
             }
+            reconnect();
         });
     } catch (e) {
         adapter.log.error('SerialPort ERROR = ' + JSON.stringify(e));
@@ -536,10 +536,12 @@ function openChannel(index, msg, cb){
                 adapter.log.debug('Канал связи открыт');
                 cb();
             } else {
-                adapter.log.debug('Error: opening communication channel');
-                //reconnect();
-                cb && cb();
-                //cb('Error opening communication channel');
+                //adapter.log.error('Error: opening communication channel');
+                if(mercury) {
+                    reconnect();
+                } else {
+                    cb && cb('Error: opening communication channel');
+                }
             }
         });
     } else {
