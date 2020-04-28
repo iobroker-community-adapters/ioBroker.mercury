@@ -244,7 +244,7 @@ function findDevice(_msg){
             if (msg.addr.length > 2){
                 msg.addr = parseInt(msg.addr.substr(msg.addr.length - 3));
                 if (parseInt(msg.addr, 10) > 240){
-                    msg.addr = parseInt(msg.addr.substr(msg.addr.length - 2));
+                    msg.addr = parseInt(msg.addr.toString().substr(msg.addr.toString().length - 2));
                 }
             }
             msg.addr = parseInt(msg.addr, 10);
