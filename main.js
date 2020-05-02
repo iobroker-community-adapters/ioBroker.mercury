@@ -443,6 +443,7 @@ function connect(){
 }
 
 function openSerialPort(){
+    serial && serial.flush();
     serial.open((err) => {
         if (err){
             adapter.log.error('serial open ' + adapter.config.usbport + ' ERROR: ' + err.message);
