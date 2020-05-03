@@ -7,7 +7,7 @@ const SerialPort = require('serialport');
 const Transform = require('stream').Transform;
 let mercury, serial;
 let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
-    fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, parser, isPoll = false, queueCmd = null, endTime, startTime;
+    fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, isPoll = false, queueCmd = null, endTime, startTime;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 class InterByteTimeoutParser extends Transform {
@@ -349,7 +349,7 @@ function send(msg, cb){
     }, 5000);
     if (serial){
         adapter.log.debug('send serial ' + serial.path);
-        parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
+        const parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
         parser.once('data', (response) => {
             clearTimeout(timeout);
             checkCRC(response, msg, cb);
