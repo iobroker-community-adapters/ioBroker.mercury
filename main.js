@@ -196,7 +196,7 @@ function sendPolling(index, protocol, nameArray, cb){
             });
         }
     } catch (e) {
-        console.log(e);
+        adapter.log.error('Error: sendPolling ' + e);
     }
 }
 
