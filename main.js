@@ -4,20 +4,21 @@ const fs = require('fs');
 const net = require('net');
 const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
-const Transform = require('stream').Transform;
+const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
+//const Transform = require('stream').Transform;
 let mercury, serial;
 let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, isPoll = false, queueCmd = null, endTime, startTime;
+let parser;
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
-class InterByteTimeoutParser extends Transform {
+/*class InterByteTimeoutParser extends Transform {
     constructor(options = {interval: 15}){
         super();
         this.currentPacket = [];
         this.interval = options.interval;
         this.intervalID = -1;
     }
-
     _transform(chunk, encoding, cb){
         clearTimeout(this.intervalID);
         this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
@@ -26,12 +27,11 @@ class InterByteTimeoutParser extends Transform {
         }
         cb();
     }
-
     emitPacket(){
         this.push(Buffer.from(this.currentPacket));
         this.currentPacket = [];
     }
-}
+}*/
 
 function startAdapter(options){
     return adapter = utils.adapter(Object.assign({}, options, {
@@ -340,6 +340,7 @@ function send(msg, cb){
     if (mercury) mercury._events.data = undefined;
     if (serial) serial._events.data = undefined;
     clearTimeout(timeout);
+    //if(parser) parser = null;
     timeout = setTimeout(() => {
         adapter.log.error('No response');
         if (mercury) mercury._events.data = undefined;
@@ -350,7 +351,7 @@ function send(msg, cb){
     }, 5000);
     if (serial){
         adapter.log.debug('send serial ' + serial.path);
-        const parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
+        //parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
         parser.once('data', (response) => {
             clearTimeout(timeout);
             checkCRC(response, msg, cb);
@@ -439,6 +440,7 @@ function connect(){
             endOnClose: true,
             autoOpen:   false
         });
+        parser = serial.pipe(new InterByteTimeout({interval: 500/*adapter.config.timeoutresponse*/}));
         connectSerial();
     }
 }
