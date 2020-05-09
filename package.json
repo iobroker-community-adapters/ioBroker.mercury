@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@iobroker/adapter-core": "^1.0.3",
-    "serialport": "^8.0.6",
+    "serialport": "^8.0.5",
     "@serialport/parser-inter-byte-timeout": "^8.0.6"
   },
   "devDependencies": {
