@@ -344,7 +344,7 @@ function send(msg, cb){
     timeout = setTimeout(() => {
         adapter.log.error('No response');
         if (mercury) mercury._events.data = undefined;
-        if (serial) serial._events.data = undefined;
+        //if (serial) serial._events.data = undefined;
         pollAllowed = true;
         _callback && _callback('No response');
         cb && cb('');
@@ -352,8 +352,8 @@ function send(msg, cb){
     if (serial){
         adapter.log.debug('send serial ' + serial.path);
         //parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
-        if(parser && parser.data) parser.data = null;
-        parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
+        //if(parser && parser.data) parser.data = null;
+        parser = serial.pipe(new InterByteTimeout({interval: 500}));
         parser.once('data', (response) => {
             timeout && clearTimeout(timeout);
             checkCRC(response, msg, cb);
