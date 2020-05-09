@@ -440,7 +440,7 @@ function connect(){
             endOnClose: true,
             autoOpen:   false
         });
-        parser = serial.pipe(new InterByteTimeout({interval: 500/*adapter.config.timeoutresponse*/}));
+        parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
         connectSerial();
     }
 }
