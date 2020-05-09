@@ -338,9 +338,9 @@ function getDeviceInfo(index, msg, cb){
 
 function send(msg, cb){
     if (mercury) mercury._events.data = undefined;
-    if (serial) serial._events.data = undefined;
-    clearTimeout(timeout);
-    //if(parser) parser = null;
+    //if (serial) serial._events.data = undefined;
+    timeout && clearTimeout(timeout);
+    //if(parser && parser.data) parser.data = null;
     timeout = setTimeout(() => {
         adapter.log.error('No response');
         if (mercury) mercury._events.data = undefined;
@@ -352,14 +352,16 @@ function send(msg, cb){
     if (serial){
         adapter.log.debug('send serial ' + serial.path);
         //parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
+        if(parser && parser.data) parser.data = null;
+        parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
         parser.once('data', (response) => {
-            clearTimeout(timeout);
+            timeout && clearTimeout(timeout);
             checkCRC(response, msg, cb);
         });
     } else {
         adapter.log.debug('send tcp');
         mercury.once('data', (response) => {
-            clearTimeout(timeout);
+            timeout && clearTimeout(timeout);
             checkCRC(response, msg, cb);
         });
     }
@@ -440,7 +442,7 @@ function connect(){
             endOnClose: true,
             autoOpen:   false
         });
-        parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
+        //parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
         connectSerial();
     }
 }
@@ -474,7 +476,7 @@ function connectSerial(){
             //reconnect();
         });
         serial.on('close', (err) => {
-            if(err){
+            if (err){
                 adapter.log.debug('serial closed: ' + err.message);
             }
             reconnect();
@@ -539,7 +541,7 @@ function openChannel(index, msg, cb){
                 cb();
             } else {
                 //adapter.log.error('Error: opening communication channel');
-                if(mercury) {
+                if (mercury){
                     reconnect();
                 } else {
                     cb && cb('Error: opening communication channel');
