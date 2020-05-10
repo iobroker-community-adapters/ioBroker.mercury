@@ -5,33 +5,12 @@ const net = require('net');
 const m = require('./lib/mercury.js');
 const SerialPort = require('serialport');
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
-//const Transform = require('stream').Transform;
 let mercury, serial;
 let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, isPoll = false, queueCmd = null, endTime, startTime;
 let parser;
-const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
-/*class InterByteTimeoutParser extends Transform {
-    constructor(options = {interval: 15}){
-        super();
-        this.currentPacket = [];
-        this.interval = options.interval;
-        this.intervalID = -1;
-    }
-    _transform(chunk, encoding, cb){
-        clearTimeout(this.intervalID);
-        this.intervalID = setTimeout(this.emitPacket.bind(this), this.interval);
-        for (let offset = 0; offset < chunk.length; offset++) {
-            this.currentPacket.push(chunk[offset]);
-        }
-        cb();
-    }
-    emitPacket(){
-        this.push(Buffer.from(this.currentPacket));
-        this.currentPacket = [];
-    }
-}*/
+const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
 function startAdapter(options){
     return adapter = utils.adapter(Object.assign({}, options, {
@@ -39,10 +18,11 @@ function startAdapter(options){
         name:         'mercury',
         ready:        main,
         unload:       (callback) => {
-            clearTimeout(timeout);
-            clearTimeout(timeoutPoll);
-            clearTimeout(CRCTimeOut);
-            clearTimeout(reconnectTimeOut);
+            timeout && clearTimeout(timeout);
+            timeoutPoll && clearTimeout(timeoutPoll);
+            CRCTimeOut && clearTimeout(CRCTimeOut);
+            reconnectTimeOut && clearTimeout(reconnectTimeOut);
+            if(parser) parser.destroy();
             if (serial) serial.close;
             if (mercury) mercury.destroy();
             try {
@@ -338,31 +318,27 @@ function getDeviceInfo(index, msg, cb){
 
 function send(msg, cb){
     if (mercury) mercury._events.data = undefined;
-    //if (serial) serial._events.data = undefined;
     timeout && clearTimeout(timeout);
-    //if(parser && parser.data) parser.data = null;
     timeout = setTimeout(() => {
         adapter.log.error('No response');
         if (mercury) mercury._events.data = undefined;
-        //if (serial) serial._events.data = undefined;
         pollAllowed = true;
         _callback && _callback('No response');
         cb && cb('');
     }, 5000);
     if (serial){
         adapter.log.debug('send serial ' + serial.path);
-        //parser = serial.pipe(new InterByteTimeoutParser({interval: adapter.config.timeoutresponse}));
-        //if(parser && parser.data) parser.data = null;
-        parser = serial.pipe(new InterByteTimeout({interval: 500}));
         parser.once('data', (response) => {
             timeout && clearTimeout(timeout);
             checkCRC(response, msg, cb);
+            cb = null;
         });
     } else {
         adapter.log.debug('send tcp');
         mercury.once('data', (response) => {
             timeout && clearTimeout(timeout);
             checkCRC(response, msg, cb);
+            cb = null;
         });
     }
     const b1 = ((m.crc(msg.cmd) >> 8) & 0xff);
@@ -372,27 +348,6 @@ function send(msg, cb){
     adapter.log.debug('Send cmd - [' + m.toHexString(msg.cmd) + ']');
     serial ? serial.write(buf) :mercury.write(buf);
 }
-
-const checkCRC = function (response, msg, cb){
-    adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
-    const crc_packet = (response.slice(response.length - 2, response.length)).toJSON().data.toString();
-    const crc_calc = [(m.crc(response.slice(0, response.length - 2)) & 0xff), ((m.crc(response.slice(0, response.length - 2)) >> 8) & 0xff)].toString();
-    if (crc_packet === crc_calc){
-        adapter.log.debug('CRC check packet successfully - CRC packet(' + JSON.stringify(crc_packet) + ') = CRC calc(' + JSON.stringify(crc_calc) + ')');
-        if (cb){
-            CRCTimeOut = setTimeout(() => {
-                cb(response);
-            }, 100);
-        } else {
-            parseFindPacket(response, msg, cb);
-        }
-    } else {
-        adapter.log.debug('check CRC error - CRC packet(' + JSON.stringify(crc_packet) + ') != CRC calc(' + JSON.stringify(crc_calc) + ')');
-        pollAllowed = true;
-        _callback && _callback('CRC Error');
-        cb && cb('');
-    }
-};
 
 function main(){
     if (!adapter.systemConfig) return;
@@ -439,16 +394,18 @@ function connect(){
             baudRate:   parseInt(adapter.config.baud, 10),
             parity:     adapter.config.parity ? 'even' :'none', //'none', 'even', 'mark', 'odd', 'space'.
             dataBits:   8,
-            endOnClose: true,
+            endOnClose: false,
             autoOpen:   false
         });
-        //parser = serial.pipe(new InterByteTimeout({interval: parseInt(adapter.config.timeoutresponse, 10)}));
+        const interval = parseInt(adapter.config.timeoutresponse, 10) || 500;
+        parser = serial.pipe(new InterByteTimeout({maxBufferSize: 512, interval: interval})); //
+        serial.setMaxListeners(10);
+        parser.setMaxListeners(10);
         connectSerial();
     }
 }
 
 function openSerialPort(){
-    serial && serial.flush();
     serial.open((err) => {
         if (err){
             adapter.log.error('serial open ' + adapter.config.usbport + ' ERROR: ' + err.message);
@@ -552,6 +509,27 @@ function openChannel(index, msg, cb){
         cb && cb();
     }
 }
+
+const checkCRC = function (response, msg, cb){
+    adapter.log.debug('RESPONSE = ' + JSON.stringify(response));
+    const crc_packet = (response.slice(response.length - 2, response.length)).toJSON().data.toString();
+    const crc_calc = [(m.crc(response.slice(0, response.length - 2)) & 0xff), ((m.crc(response.slice(0, response.length - 2)) >> 8) & 0xff)].toString();
+    if (crc_packet === crc_calc){
+        adapter.log.debug('CRC check packet successfully - CRC packet(' + JSON.stringify(crc_packet) + ') = CRC calc(' + JSON.stringify(crc_calc) + ')');
+        if (cb){
+            CRCTimeOut = setTimeout(() => {
+                cb(response);
+            }, 100);
+        } else {
+            parseFindPacket(response, msg, cb);
+        }
+    } else {
+        adapter.log.debug('check CRC error - CRC packet(' + JSON.stringify(crc_packet) + ') != CRC calc(' + JSON.stringify(crc_calc) + ')');
+        pollAllowed = true;
+        _callback && _callback('CRC Error');
+        cb && cb('');
+    }
+};
 
 const getDeviceIndexAtAddr = function (addr){
     let index = null;
