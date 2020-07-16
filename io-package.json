@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "news": {
+      "0.1.3": {
+        "en": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "de": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "ru": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "pt": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "nl": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "fr": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "it": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "es": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "pl": "fixed error [issues 11]\nfixed warn [issues 8]",
+        "zh-cn": "fixed error [issues 11]\nfixed warn [issues 8]"
+      },
       "0.1.2": {
         "en": "fixed error serial memory",
         "de": "fixed error serial memory",

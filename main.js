@@ -608,11 +608,13 @@ function setStates(index, name, desc, val, unit){
                 adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
-                if (state.val === val){
-                    adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' = newVal: ' + val + ' }');
-                } else if (state.val !== val){
-                    adapter.setState(name, {val: val, ack: true});
-                    adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' != newVal: ' + val + ' }');
+                if(state){
+                    if (state.val === val){
+                        adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' = newVal: ' + val + ' }');
+                    } else if (state.val !== val){
+                        adapter.setState(name, {val: val, ack: true});
+                        adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' != newVal: ' + val + ' }');
+                    }
                 }
             });
         }
@@ -620,16 +622,17 @@ function setStates(index, name, desc, val, unit){
 }
 
 function setDev(index){
-    const prefix = devices[index].info.sn.val;
+    adapter.log.debug('------------ setDev -------------');
+    const prefix = devices[index].info.sn.val.toString();
     let img = parseInt(devices[index].conf.model.val);
     if (img === 230 || img === 231 || img === 234) img = img + '' + devices[index].info.typeCount.val;
     const icon = 'img/' + img + '.png';
     adapter.setObjectNotExists(prefix, {
         type:   'device',
-        common: {name: devices[index].conf.name.val, type: 'counter', icon: icon},
+        common: {name: devices[index].conf.name.val, type: 'string', icon: icon},
         native: {id: prefix}
     }, () => {
-        adapter.extendObject(prefix, {common: {name: devices[index].conf.name.val, type: 'counter', icon: icon}});
+        adapter.extendObject(prefix, {common: {name: devices[index].conf.name.val, type: 'string', icon: icon}});
         setStates(index, prefix + '.RAW', 'Send RAW command to counter', '');
     });
 }
