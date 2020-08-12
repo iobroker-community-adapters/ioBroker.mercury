@@ -247,7 +247,7 @@ function findDevice(_msg){
 function parseFindPacket(response, msg, cb){ //response, cmd, protocol
     if (msg.protocol === 1){
         adapter.log.debug('Парсим ответ от однофазного счетчика');
-        if (response[0] === 0 && response[4] === 47){  //hex 2f //Ответ на поиск 1 фазного
+        if (/*response[0] === 0 && */response[4] === 47){  //hex 2f //Ответ на поиск 1 фазного
             const addrInt = response.readUInt32BE(0); //0 14 31 155
             const index = getDeviceIndexAtAddr(addrInt);
             devices[index] = m.template[msg.protocol];
