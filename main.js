@@ -583,7 +583,9 @@ const addrToArray = function (addrInt){
 };
 
 function setStates(index, name, desc, val, unit){
-    if ((val > -5 && val < 0) || val === null) val = 0;
+    if (((val > -5 && val < 0) || val === null) && !~name.indexOf('cosfTotal')) {
+        val = 0;
+    }
     adapter.getObject(name, function (err, obj){
         //adapter.log.debug('getState / err = ' + err + ' / name = ' + name + ' / state = ' + JSON.stringify(state));
         if (err || !obj){
