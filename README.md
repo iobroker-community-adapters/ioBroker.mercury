@@ -1,6 +1,7 @@
 ![Logo](admin/mercury.png)
 # ioBroker.mercury
 
+![Number of Installations](http://iobroker.live/badges/mercury-installed.svg)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.mercury.svg)](https://www.npmjs.com/package/iobroker.mercury)
 [![NPM version](http://img.shields.io/npm/v/iobroker.mercury.svg)](https://www.npmjs.com/package/iobroker.mercury)
 ![Stable](http://iobroker.live/badges/mercury-stable.svg) 
