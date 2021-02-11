@@ -320,7 +320,7 @@ function send(msg, cb){
     if (mercury) mercury._events.data = undefined;
     timeout && clearTimeout(timeout);
     timeout = setTimeout(() => {
-        adapter.log.debug('No response');
+        adapter.log.debug('No response...');
         if (mercury) mercury._events.data = undefined;
         pollAllowed = true;
         _callback && _callback('No response');
