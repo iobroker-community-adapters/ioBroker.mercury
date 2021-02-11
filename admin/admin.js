@@ -193,7 +193,7 @@ function getCard(dev, i){
         }
 
         //console.log('88888888 = ' + JSON.stringify(dev));
-        const card = '<div id="' + id + '"class="col m3">' +
+        const card = '<div id="' + id + '" class="col m4 s3 l3 xl3">' +
             '<div class="card">' +
             '<div class="card hoverable">' +
             '<div class="card-image waves-effect waves-block waves-light">' +
@@ -222,7 +222,7 @@ function getCard(dev, i){
 function showDevices(){
     let html = '';
     $('#devices').html(html);
-    const lang = systemLang || 'en';
+    //const lang = systemLang || 'en';
     if (devices.length > 0){
         for (let i = 0; i < devices.length; i++) {
             const d = devices[i];
