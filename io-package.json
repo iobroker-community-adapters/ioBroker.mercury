@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "news": {
+      "0.1.4": {
+        "en": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "de": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "ru": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "pt": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "nl": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "fr": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "it": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "es": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "pl": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
+        "zh-cn": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect"
+      },
       "0.1.3": {
         "en": "fixed error [issues 11]\nfixed warn [issues 8]",
         "de": "fixed error [issues 11]\nfixed warn [issues 8]",
@@ -38,126 +50,6 @@
         "es": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
         "pl": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
         "zh-cn": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring"
-      },
-      "0.1.0": {
-        "en": "beta",
-        "de": "beta",
-        "ru": "beta",
-        "pt": "beta",
-        "nl": "beta",
-        "fr": "beta",
-        "it": "beta",
-        "es": "beta",
-        "pl": "beta",
-        "zh-cn": "beta"
-      },
-      "0.0.15": {
-        "en": "fixed error Power",
-        "de": "fixed error Power",
-        "ru": "fixed error Power",
-        "pt": "fixed error Power",
-        "nl": "fixed error Power",
-        "fr": "fixed error Power",
-        "it": "fixed error Power",
-        "es": "fixed error Power",
-        "pl": "fixed error Power",
-        "zh-cn": "fixed error Power"
-      },
-      "0.0.13": {
-        "en": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "de": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "ru": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "pt": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "nl": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "fr": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "it": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "es": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "pl": "translate\nadded translate\nadded temperature, frequency, full power\nfix error",
-        "zh-cn": "translate\nadded translate\nadded temperature, frequency, full power\nfix error"
-      },
-      "0.0.11": {
-        "en": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "de": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "ru": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "pt": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "nl": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "fr": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "it": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "es": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "pl": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error",
-        "zh-cn": "added translate function (PLEASE HELP WITH THE TRANSLATION)\nfix error"
-      },
-      "0.0.10": {
-        "en": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "de": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "ru": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "pt": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "nl": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "fr": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "it": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "es": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "pl": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error",
-        "zh-cn": "Added setting Polling period main parameters\nAdded setting Polling period of non-main parameters\nRefactoring and fix error"
-      },
-      "0.0.8": {
-        "en": "fixed error",
-        "de": "fixed error",
-        "ru": "fixed error",
-        "pt": "fixed error",
-        "nl": "fixed error",
-        "fr": "fixed error",
-        "it": "fixed error",
-        "es": "fixed error",
-        "pl": "fixed error",
-        "zh-cn": "fixed error"
-      },
-      "0.0.4": {
-        "en": "added unit for state",
-        "de": "added unit for state",
-        "ru": "added unit for state",
-        "pt": "added unit for state",
-        "nl": "added unit for state",
-        "fr": "added unit for state",
-        "it": "added unit for state",
-        "es": "added unit for state",
-        "pl": "added unit for state",
-        "zh-cn": "added unit for state"
-      },
-      "0.0.3": {
-        "en": "added object send RAW command\nrefactor and fix error",
-        "de": "added object send RAW command\nrefactor and fix error",
-        "ru": "added object send RAW command\nrefactor and fix error",
-        "pt": "added object send RAW command\nrefactor and fix error",
-        "nl": "added object send RAW command\nrefactor and fix error",
-        "fr": "added object send RAW command\nrefactor and fix error",
-        "it": "added object send RAW command\nrefactor and fix error",
-        "es": "added object send RAW command\nrefactor and fix error",
-        "pl": "added object send RAW command\nrefactor and fix error",
-        "zh-cn": "added object send RAW command\nrefactor and fix error"
-      },
-      "0.0.2": {
-        "en": "added serial connect\nfixed many error",
-        "de": "added serial connect\nfixed many error",
-        "ru": "added serial connect\nfixed many error",
-        "pt": "added serial connect\nfixed many error",
-        "nl": "added serial connect\nfixed many error",
-        "fr": "added serial connect\nfixed many error",
-        "it": "added serial connect\nfixed many error",
-        "es": "added serial connect\nfixed many error",
-        "pl": "added serial connect\nfixed many error",
-        "zh-cn": "added serial connect\nfixed many error"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版"
       }
     },
     "title": "Mercury electric meter",

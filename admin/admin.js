@@ -61,7 +61,7 @@ $(document).ready(function (){
     $('.modaladd').modal({
         onOpenStart(){
             let l = 'ru';
-            if (lang != 'ru'){
+            if (lang !== 'ru'){
                 l = 'en';
             }
             $('#userandpassword').hide();
@@ -125,7 +125,7 @@ function getOptions(){
 
 function appendModelList(options){
     let l = 'ru';
-    if (lang != 'ru'){
+    if (lang !== 'ru'){
         l = 'en';
     }
     for (const key in options.model) {

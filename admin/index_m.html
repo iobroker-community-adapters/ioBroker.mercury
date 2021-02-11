@@ -10,19 +10,52 @@
     <link rel="stylesheet" type="text/css" href="style.css"/>
     <script type="text/javascript" src="admin.js"></script>
     <script type="text/javascript" src="words.js"></script>
+    <script>
+        $(function(){
+            $(".adapter-body").append("" +
+                "<div class=\"m row\" style='display:block;position:absolute;bottom:130px;right:0;'>" +
+                "<div class=\"col right\">" +
+                "<div class=\"col\" style=\"margin-top:10px;float:right;margin-right:20px;\">" +
+                "<a target=\"_blank\" href=\"https://sobe.ru/na/instalator\"><img style=\"float:right;\" src=\"https://img.shields.io/badge/Donate-YooMoney-green\" alt=\"\"></a>" +
+                "<a target=\"_blank\" href=\"https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=PFUALWTR2CTPY\"><img style=\"float:right;padding-right:10px;\" src=\"https://img.shields.io/badge/Donate-PayPal-green.svg\" alt=\"\"></a>"+
+                "</div></div></div>");
+        });
+    </script>
+    <style>
+        .adapter-body {
+            display: block;
+        }
+        .m .input-field>label {
+            color: #5a5a5a;
+        }
+        .adapter-body::after {
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            content: "";
+            background: url(background.jpg);
+            background-position: top;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.1;
+            position: absolute;
+            z-index: -1;
+        }
+    </style>
 </head>
 <body>
 <div id="main" class="m adapter-container">
     <div class="row navbar-fixed">
         <nav class="nav-extended">
-            <div class="nav-wrapper">
-                <div class="col m1 l1 s1">
-                    <img src="mercury.png" class="brand-logo" height="64px" alt="Mercury adapter">
-                </div>
-                <div class="col s6 l6 m6">
-                    <h5 class="translate center-align">mercury adapter</h5>
-                </div>
-            </div>
+<!--            <div class="nav-wrapper">-->
+<!--                <div class="col m1 l1 s1">-->
+<!--                    <img src="mercury.png" class="brand-logo" height="64px" alt="Mercury adapter">-->
+<!--                </div>-->
+<!--                <div class="col s6 l6 m6">-->
+<!--                    <h5 class="translate center-align">mercury adapter</h5>-->
+<!--                </div>-->
+<!--            </div>-->
             <div class="nav-content">
                 <ul class="tabs tabs-transparent">
                     <li class="tab"><a href="#tab-devices" class="active"><i class="material-icons left">devices</i><span class="translate">devices</span></a></li>
@@ -52,22 +85,22 @@
             </div>
             <div id="tcp-block" class="row col m12">
                 <div class="col m12">
-                    <div class="input-field col s2">
+                    <div class="input-field col l2">
                         <input id="ip" type="text" class="value"><label for="ip" class="translate">ip</label>
                     </div>
-                    <div class="input-field col s1">
+                    <div class="input-field col m2 l1">
                         <input id="tcpport" type="number" class="value"><label for="tcpport" class="translate">tcpport</label>
                     </div>
                 </div>
             </div>
             <div id="pollingtime-block" class="row col m12">
                 <div class="col m12">
-                    <div class="input-field col s3">
+                    <div class="input-field col m4 l3">
                         <input id="fastpollingtime" type="number" min="1" class="value"><label for="fastpollingtime" class="translate">fastPollingTime</label>
                     </div>
                 </div>
                 <div class="col m12">
-                    <div class="input-field col s3">
+                    <div class="input-field col m4 l3">
                         <input id="slowpollingtime" type="number" min="5000" class="value"><label for="slowpollingtime" class="translate">slowPollingTime</label>
                     </div>
                 </div>
