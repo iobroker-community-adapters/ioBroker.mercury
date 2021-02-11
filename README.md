@@ -1,10 +1,9 @@
 ![Logo](admin/mercury.png)
 # ioBroker.mercury
 
-[![NPM version](http://img.shields.io/npm/v/iobroker.mercury.svg)](https://www.npmjs.com/package/iobroker.mercury)
 [![Downloads](https://img.shields.io/npm/dm/iobroker.mercury.svg)](https://www.npmjs.com/package/iobroker.mercury)
-[![Dependency Status](https://img.shields.io/david/instalator/iobroker.mercury.svg)](https://david-dm.org/instalator/iobroker.mercury)
-[![Known Vulnerabilities](https://snyk.io/test/github/instalator/ioBroker.mercury/badge.svg)](https://snyk.io/test/github/instalator/ioBroker.mercury)
+[![NPM version](http://img.shields.io/npm/v/iobroker.mercury.svg)](https://www.npmjs.com/package/iobroker.mercury)
+![Stable](http://iobroker.live/badges/mercury-stable.svg) 
 [![Tests](https://github.com/instalator/iobroker.mercury/workflows/Test%20and%20Release/badge.svg)](https://github.com/instalator/ioBroker.mercury/actions/)
 
 [![NPM](https://nodei.co/npm/iobroker.mercury.png?downloads=true)](https://nodei.co/npm/iobroker.mercury/)
