@@ -543,6 +543,7 @@ const getDeviceIndexAtAddr = function (addr){
         return devices.length;
     }
 };
+
 const getDeviceIndexAtSn = function (s){
     let index = null;
     devices.some((item, i) => {
