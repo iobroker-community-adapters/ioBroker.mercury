@@ -460,7 +460,8 @@ function connectTCP(){
     });
     mercury.on('error', (e) => {
         adapter.log.error('Mercury ERROR: ' + JSON.stringify(e));
-        if (!e.code || e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL' || e.code === 'ECONNRESET' || e.code === 'ENOTFOUND') reconnect();
+        /*if (!e.code || e.code === 'EISCONN' || e.code === 'EPIPE' || e.code === 'EALREADY' || e.code === 'EINVAL' || e.code === 'ECONNRESET' || e.code === 'ENOTFOUND' || e.code === 'ECONNREFUSED')*/
+        reconnect();
     });
     mercury.on('end', () => {
         adapter.log.debug('Disconnected from server');
@@ -498,7 +499,7 @@ function openChannel(index, msg, cb){
                 cb();
             } else {
                 //adapter.log.error('Error: opening communication channel');
-                if (mercury){
+                if (mercury || serial){
                     reconnect();
                 } else {
                     cb && cb('Error: opening communication channel');
