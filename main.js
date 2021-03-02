@@ -8,7 +8,7 @@ const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
 let mercury, serial;
 let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, isPoll = false, queueCmd = null, endTime, startTime;
-let parser;
+let parser, index = 0;
 
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
@@ -22,7 +22,7 @@ function startAdapter(options){
             timeoutPoll && clearTimeout(timeoutPoll);
             CRCTimeOut && clearTimeout(CRCTimeOut);
             reconnectTimeOut && clearTimeout(reconnectTimeOut);
-            if(parser) parser.destroy();
+            if (parser) parser.destroy();
             if (serial) serial.close;
             if (mercury) mercury.destroy();
             try {
@@ -118,29 +118,30 @@ function poll(){
         iter = 0;
         isPoll = true;
         let nameArray = '';
-        for (let index = 0; index < devices.length; index++) {
-            msg.protocol = devices[index].conf.protocol.val;
-            adapter.log.debug('Опрашиваем счетчик # ' + index + ' с адресом: ' + devices[index].conf.addr.val);
-            openChannel(index, msg, (e) => {
-                if (!e){
-                    if (endTime - startTime > slowPollingTime){
-                        startTime = new Date().getTime();
-                        nameArray = 'poll';
-                    } else {
-                        if (firstStart){
-                            pollAllowed = false;
-                            nameArray = 'first';
-                        } else {
-                            nameArray = 'fastpoll';
-                        }
-                    }
-                    adapter.log.debug('slowPollingTime = ' + (endTime - startTime));
-                    sendPolling(index, msg.protocol, nameArray);
+        //for (let index = 0; index < devices.length; index++) {
+        if (index > devices.length) index = 0;
+        msg.protocol = devices[index].conf.protocol.val;
+        adapter.log.debug('Опрашиваем счетчик # ' + index + ' с адресом: ' + devices[index].conf.addr.val);
+        openChannel(index, msg, (e) => {
+            if (!e){
+                if (endTime - startTime > slowPollingTime){
+                    startTime = new Date().getTime();
+                    nameArray = 'poll';
                 } else {
-                    adapter.log.error(e);
+                    if (firstStart){
+                        pollAllowed = false;
+                        nameArray = 'first';
+                    } else {
+                        nameArray = 'fastpoll';
+                    }
                 }
-            });
-        }
+                adapter.log.debug('slowPollingTime = ' + (endTime - startTime));
+                sendPolling(index, msg.protocol, nameArray);
+            } else {
+                adapter.log.error(e);
+            }
+        });
+        //}
     }
 }
 
@@ -168,6 +169,7 @@ function sendPolling(index, protocol, nameArray, cb){
                     setObjects(index);
                     timeoutPoll = setTimeout(() => {
                         endTime = new Date().getTime();
+                        index++;
                         poll();
                     }, fastPollingTime);
                 } else {
@@ -475,6 +477,7 @@ function reconnect(){
     isOnline = false;
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 10 seconds');
+    reconnectTimeOut && clearTimeout(reconnectTimeOut);
     reconnectTimeOut = setTimeout(() => {
         if (mercury) mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
@@ -584,7 +587,7 @@ const addrToArray = function (addrInt){
 };
 
 function setStates(index, name, desc, val, unit){
-    if (((val > -5 && val < 0) || val === null) && !~name.indexOf('cosfTotal')) {
+    if (((val > -5 && val < 0) || val === null) && !~name.indexOf('cosfTotal')){
         val = 0;
     }
     adapter.getObject(name, function (err, obj){
@@ -612,7 +615,7 @@ function setStates(index, name, desc, val, unit){
                 adapter.extendObject(name, {common: {name: desc, desc: desc, unit: unit}});
             }
             adapter.getState(name, function (err, state){
-                if(state){
+                if (state){
                     if (state.val === val){
                         adapter.log.debug('setState ' + name + ' { oldVal: ' + state.val + ' = newVal: ' + val + ' }');
                     } else if (state.val !== val){
