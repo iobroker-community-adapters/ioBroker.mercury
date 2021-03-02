@@ -476,14 +476,15 @@ function reconnect(){
     pollAllowed = false;
     isOnline = false;
     adapter.setState('info.connection', false, true);
-    adapter.log.debug('Mercury reconnect after 10 seconds');
+    adapter.log.debug('Mercury reconnect after 20 seconds');
     reconnectTimeOut && clearTimeout(reconnectTimeOut);
+    index++;
     reconnectTimeOut = setTimeout(() => {
         if (mercury) mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
         serial && serial.close();
         serial ? openSerialPort() :connectTCP();
-    }, 10000);
+    }, 20000);
 }
 
 function openChannel(index, msg, cb){
