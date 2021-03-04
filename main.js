@@ -119,7 +119,7 @@ function poll(){
         isPoll = true;
         let nameArray = '';
         //for (let index = 0; index < devices.length; index++) {
-        if (poll_index > devices.length) poll_index = 0;
+        if (poll_index >= devices.length) poll_index = 0;
         msg.protocol = devices[poll_index].conf.protocol.val;
         adapter.log.debug('Опрашиваем счетчик # ' + poll_index + ' с адресом: ' + devices[poll_index].conf.addr.val);
         openChannel(poll_index, msg, (e) => {
