@@ -8,7 +8,7 @@ const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
 let mercury, serial;
 let adapter, _callback, devices = [], dataFile = 'devices.json', pollAllowed = false, isOnline = false, iter = 0, firstStart = true,
     fastPollingTime, slowPollingTime, timeout = null, reconnectTimeOut = null, CRCTimeOut = null, timeoutPoll = null, isPoll = false, queueCmd = null, endTime, startTime;
-let parser, index = 0;
+let parser, poll_index = 0;
 
 const msg = {cmd: [], protocol: null, addr: 0, pwd: [], user: 1};
 
@@ -119,10 +119,10 @@ function poll(){
         isPoll = true;
         let nameArray = '';
         //for (let index = 0; index < devices.length; index++) {
-        if (index > devices.length) index = 0;
-        msg.protocol = devices[index].conf.protocol.val;
-        adapter.log.debug('Опрашиваем счетчик # ' + index + ' с адресом: ' + devices[index].conf.addr.val);
-        openChannel(index, msg, (e) => {
+        if (poll_index > devices.length) poll_index = 0;
+        msg.protocol = devices[poll_index].conf.protocol.val;
+        adapter.log.debug('Опрашиваем счетчик # ' + poll_index + ' с адресом: ' + devices[poll_index].conf.addr.val);
+        openChannel(poll_index, msg, (e) => {
             if (!e){
                 if (endTime - startTime > slowPollingTime){
                     startTime = new Date().getTime();
@@ -136,7 +136,7 @@ function poll(){
                     }
                 }
                 adapter.log.debug('slowPollingTime = ' + (endTime - startTime));
-                sendPolling(index, msg.protocol, nameArray);
+                sendPolling(poll_index, msg.protocol, nameArray);
             } else {
                 adapter.log.error(e);
             }
@@ -169,7 +169,7 @@ function sendPolling(index, protocol, nameArray, cb){
                     setObjects(index);
                     timeoutPoll = setTimeout(() => {
                         endTime = new Date().getTime();
-                        index++;
+                        poll_index++;
                         poll();
                     }, fastPollingTime);
                 } else {
@@ -478,7 +478,7 @@ function reconnect(){
     adapter.setState('info.connection', false, true);
     adapter.log.debug('Mercury reconnect after 20 seconds');
     reconnectTimeOut && clearTimeout(reconnectTimeOut);
-    index++;
+    poll_index++;
     reconnectTimeOut = setTimeout(() => {
         if (mercury) mercury._events.data = undefined;
         if (serial) serial._events.data = undefined;
@@ -490,8 +490,12 @@ function reconnect(){
 function openChannel(index, msg, cb){
     msg.protocol = index ? devices[index].conf.protocol.val :msg.protocol;
     if (msg.protocol === 2){
-        msg.addr = index ? devices[index].conf.addr.val :msg.addr;
+        //msg.addr = index ? devices[index].conf.addr.val :msg.addr;
+        /*if(index !== null){
+            msg.addr = devices[index].conf.addr.val;
+        }*/
         if (index !== null){
+            msg.addr = devices[index].conf.addr.val;
             msg.pwd = devices[index].conf.pwd.val;
             msg.user = parseInt(devices[index].conf.user.val, 10);
         }
