@@ -1,8 +1,20 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "news": {
+      "0.1.5": {
+        "en": "fixed a bug with polling multiple counters",
+        "de": "fixed a bug with polling multiple counters",
+        "ru": "fixed a bug with polling multiple counters",
+        "pt": "fixed a bug with polling multiple counters",
+        "nl": "fixed a bug with polling multiple counters",
+        "fr": "fixed a bug with polling multiple counters",
+        "it": "fixed a bug with polling multiple counters",
+        "es": "fixed a bug with polling multiple counters",
+        "pl": "fixed a bug with polling multiple counters",
+        "zh-cn": "fixed a bug with polling multiple counters"
+      },
       "0.1.4": {
         "en": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
         "de": "added frequency for 1 fase\nadded powerQTotal for 1 fase\nadded powerSTotal for 1 fase\nadded cosfTotal for 1 fase\nchange recconect",
