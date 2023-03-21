@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.6",
+    "version": "0.1.7",
     "news": {
+      "0.1.7": {
+        "en": "prepare for new js-controller",
+        "de": "bereiten für neue js-controller",
+        "ru": "подготовиться к новому js-контроллеру",
+        "pt": "preparar para o novo js-controller",
+        "nl": "bereid je voor op nieuwe js-controller",
+        "fr": "préparez-vous pour un nouveau contrôleur",
+        "it": "prepararsi per nuovo js-controller",
+        "es": "prepararse para nuevo js-controller",
+        "pl": "wprowadzono nowy js-kontroler",
+        "uk": "підготовка до нових js-контролерів",
+        "zh-cn": "为新的控制力防备"
+      },
       "0.1.6": {
         "en": "Prepared for new js-controller",
         "de": "Für den neuen js-Controller vorbereitet",

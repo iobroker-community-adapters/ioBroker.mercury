@@ -43,8 +43,7 @@ Returns a buffer as a string
 ```"{"type":"Buffer","data":[0,14,31,155,50,7,0,99,0,255,255,255,255,255,255,255,255,255,255,255,255,127,86]}"```
 
 ## Changelog
-
-### 0.1.6
+### 0.1.7 (2023-03-21)
 * (foxriver76) prepare for new js-controller
 
 ### 0.1.5
@@ -111,7 +110,7 @@ Returns a buffer as a string
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2020 instalator <vvvalt@mail.ru>
+Copyright (c) 2023 instalator <vvvalt@mail.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
