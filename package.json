@@ -1,6 +1,6 @@
 {
   "name": "iobroker.mercury",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Receiving data from electricity meters Mercury",
   "author": {
     "name": "instalator",

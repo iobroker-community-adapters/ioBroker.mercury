@@ -44,6 +44,9 @@ Returns a buffer as a string
 
 ## Changelog
 
+### 0.1.6
+* (foxriver76) prepare for new js-controller
+
 ### 0.1.5
 * (instalator) fixed a bug with polling multiple counters
 
