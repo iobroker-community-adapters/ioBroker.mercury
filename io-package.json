@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "news": {
+      "0.1.8": {
+        "en": "prepare for new js-controller",
+        "de": "bereiten für neue js-controller",
+        "ru": "подготовиться к новому js-контроллеру",
+        "pt": "preparar para o novo js-controller",
+        "nl": "bereid je voor op nieuwe js-controller",
+        "fr": "préparez-vous pour un nouveau contrôleur",
+        "it": "prepararsi per nuovo js-controller",
+        "es": "prepararse para nuevo js-controller",
+        "pl": "wprowadzono nowy js-kontroler",
+        "uk": "підготовка до нових js-контролерів",
+        "zh-cn": "为新的控制力防备"
+      },
       "0.1.7": {
         "en": "prepare for new js-controller",
         "de": "bereiten für neue js-controller",
@@ -76,18 +89,6 @@
         "es": "fixed error serial memory",
         "pl": "fixed error serial memory",
         "zh-cn": "fixed error serial memory"
-      },
-      "0.1.1": {
-        "en": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "de": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "ru": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "pt": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "nl": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "fr": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "it": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "es": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "pl": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring",
-        "zh-cn": "fixed Unsigned value current\nfix for serial number > 240\nchange recconect SerialPort\nrefactoring"
       }
     },
     "title": "Mercury electric meter",

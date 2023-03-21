@@ -105,13 +105,13 @@ jobs:
               run: |
                   VERSION="${{ github.ref }}"
                   VERSION=${VERSION##*/v}
-                  echo "::set-env name=VERSION::$VERSION"
+                  echo "::set-output name=VERSION::$VERSION"
                   BODY=$(git show -s --format=%b)
                   BODY="${BODY//'%'/'%25'}"
                   BODY="${BODY//$'\n'/'%0A'}"
                   BODY="${BODY//$'\r'/'%0D'}"
-                  echo "::set-env name=BODY::$BODY"
-
+                  echo "::set-output name=BODY::$BODY"
+            -
             - name: Publish package to npm
               run: |
                   npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}

@@ -43,7 +43,11 @@ Returns a buffer as a string
 ```"{"type":"Buffer","data":[0,14,31,155,50,7,0,99,0,255,255,255,255,255,255,255,255,255,255,255,255,127,86]}"```
 
 ## Changelog
-### 0.1.7 (2023-03-21)
+<!--
+	Placeholder for the next version (at the beginning of the line):
+	### **WORK IN PROGRESS**
+-->
+### 0.1.8 (2023-03-21)
 * (foxriver76) prepare for new js-controller
 
 ### 0.1.5
