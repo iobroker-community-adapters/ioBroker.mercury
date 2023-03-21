@@ -47,7 +47,7 @@ Returns a buffer as a string
 	Placeholder for the next version (at the beginning of the line):
 	### **WORK IN PROGRESS**
 -->
-### 0.1.8 (2023-03-21)
+### 0.1.6 (2023-03-21)
 * (foxriver76) prepare for new js-controller
 
 ### 0.1.5

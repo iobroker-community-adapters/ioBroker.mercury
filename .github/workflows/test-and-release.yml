@@ -111,7 +111,7 @@ jobs:
                   BODY="${BODY//$'\n'/'%0A'}"
                   BODY="${BODY//$'\r'/'%0D'}"
                   echo "::set-output name=BODY::$BODY"
-            -
+
             - name: Publish package to npm
               run: |
                   npm config set //registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}
