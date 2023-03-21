@@ -3,6 +3,7 @@ const utils = require('@iobroker/adapter-core');
 const fs = require('fs');
 const net = require('net');
 const m = require('./lib/mercury.js');
+const path = require('path');
 const SerialPort = require('serialport');
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
 let mercury, serial;
@@ -364,8 +365,8 @@ function main(){
     m.on('info', (txt) => {
         adapter.log.info('* ' + txt);
     });
-    const dir = utils.controllerDir + '/' + adapter.systemConfig.dataDir + adapter.namespace.replace('.', '_') + '/';
-    dataFile = dir + dataFile;
+    const dir = path.join(utils.getAbsoluteDefaultDataDir(), adapter.namespace.replace('.', '_'));
+    dataFile = path.join(dir, dataFile);
     adapter.log.debug('adapter.config = ' + JSON.stringify(adapter.config));
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
     fs.readFile(dataFile, (err, data) => {

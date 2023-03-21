@@ -17,7 +17,7 @@
     "url": "https://github.com/instalator/ioBroker.mercury"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^2.4.0",
+    "@iobroker/adapter-core": "^2.6.7",
     "serialport": "^8.0.6",
     "@serialport/parser-inter-byte-timeout": "^8.0.6"
   },
