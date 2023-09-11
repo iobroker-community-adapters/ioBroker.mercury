@@ -16,6 +16,9 @@
     "type": "git",
     "url": "https://github.com/instalator/ioBroker.mercury"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "@iobroker/adapter-core": "^2.6.8",
     "@serialport/parser-inter-byte-timeout": "^8.0.6",
