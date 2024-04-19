@@ -1,7 +1,7 @@
 {
   "common": {
     "name": "mercury",
-    "version": "0.1.6",
+    "version": "0.2.0",
     "news": {
       "0.1.6": {
         "en": "prepare for new js-controller",
