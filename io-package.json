@@ -65,7 +65,6 @@
         "zh-cn": "fixed error serial memory"
       }
     },
-    "title": "Mercury electric meter",
     "titleLang": {
       "en": "Mercury electric meter",
       "de": "Quecksilber-Stromzähler",
@@ -97,15 +96,18 @@
       "Mercury",
       "electric meter"
     ],
-    "license": "MIT",
+    "licenseInformation": {
+      "license": "MIT",
+      "type": "free"
+    },
     "platform": "Javascript/Node.js",
-    "main": "main.js",
     "icon": "mercury.png",
     "enabled": true,
     "messagebox": true,
     "extIcon": "https://raw.githubusercontent.com/instalator/ioBroker.mercury/master/admin/mercury.png",
     "readme": "https://github.com/instalator/ioBroker.mercury/blob/master/README.md",
     "loglevel": "info",
+    "tier": 2,
     "mode": "daemon",
     "type": "energy",
     "compact": true,
@@ -113,7 +115,12 @@
     "stopBeforeUpdate": true,
     "dependencies": [
       {
-        "js-controller": ">=1.4.2"
+        "js-controller": ">=5.0.19"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=6.13.16"
       }
     ]
   },
