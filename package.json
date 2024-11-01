@@ -20,7 +20,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.1.6",
+    "@iobroker/adapter-core": "^3.2.2",
     "@serialport/parser-inter-byte-timeout": "^8.0.6",
     "serialport": "^10.5.0"
   },
