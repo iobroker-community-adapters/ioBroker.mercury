@@ -2,10 +2,10 @@
   "name": "iobroker.mercury",
   "version": "0.2.1",
   "description": "Receiving data from electricity meters Mercury",
-  "author": {
-    "name": "instalator",
-    "email": "vvvalt@mail.ru"
-  },
+  "author": "instalator <vvvalt@mail.ru>",
+  "contributors": [
+    "iobroker-community-adapters <iobroker-community-adapters@gmx.de>"
+  ],
   "homepage": "https://github.com/iobroker-community-adapters/ioBroker.mercury",
   "license": "MIT",
   "keywords": [
