@@ -1,9 +1,9 @@
 'use strict';
 const utils = require('@iobroker/adapter-core');
-const fs = require('fs');
-const net = require('net');
+const fs = require('node:fs');
+const net = require('node:net');
 const m = require('./lib/mercury.js');
-const path = require('path');
+const path = require('node:path');
 const SerialPort = require('serialport');
 const InterByteTimeout = require('@serialport/parser-inter-byte-timeout');
 let mercury, serial;
