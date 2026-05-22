@@ -1,16 +1,16 @@
 {
-  "settings": "Settings",
-  "typeconnect": "Connection type",
+  "settings": "Налаштування",
+  "typeconnect": "Тип підключення",
   "tcp": "TCP/IP",
   "usb": "USB/COM",
-  "ip": "IP-address",
-  "tcpport": "Port",
-  "fastPollingTime": "Polling period main parameters (ms)",
-  "slowPollingTime": "Polling period of non-main parameters (ms)",
-  "usbport": "COM-Port",
-  "baud": "Baudrate",
-  "parity": "Parity",
-  "timeoutresponse": "Response Timeout (ms)",
-  "systemtimeout": "System Timeout (ms)",
-  "factortimeout": "System tmeout multiplier"
+  "ip": "IP-адреса",
+  "tcpport": "Порт",
+  "fastPollingTime": "Інтервал опитування основних параметрів (мс)",
+  "slowPollingTime": "Інтервал опитування неосновних параметрів (мс)",
+  "usbport": "COM-порт",
+  "baud": "Швидкість передачі даних",
+  "parity": "Парність",
+  "timeoutresponse": "Тайм-аут відповіді (мс)",
+  "systemtimeout": "Системний тайм-аут (мс)",
+  "factortimeout": "Множник системного тайм-ауту"
 }

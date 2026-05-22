@@ -1,16 +1,16 @@
 {
-  "settings": "Seadistused",
-  "typeconnect": "ühenduse tüüp",
+  "settings": "Configuración",
+  "typeconnect": "Tipo de conexión",
   "tcp": "TCP/IP",
   "usb": "USB/COM",
-  "ip": "IP-aadress",
-  "tcpport": "Port",
-  "fastPollingTime": "Peamiste parameetrite vaatlusperiood (ms)",
-  "slowPollingTime": "Uuringu periood ei ole peamised parameetrid (ms)",
-  "usbport": "COM-Port",
-  "baud": "Andmekiirus",
-  "parity": "Pariteet",
-  "timeoutresponse": "Vastuse aegumine (ms)",
-  "systemtimeout": "Süsteemi aegumine (ms)",
-  "factortimeout": "Süsteemi ajalõpu kordaja"
+  "ip": "Dirección IP",
+  "tcpport": "Puerto",
+  "fastPollingTime": "Intervalo de sondeo de parámetros principales (ms)",
+  "slowPollingTime": "Intervalo de sondeo de parámetros no principales (ms)",
+  "usbport": "Puerto COM",
+  "baud": "Velocidad en baudios",
+  "parity": "Paridad",
+  "timeoutresponse": "Tiempo de espera de respuesta (ms)",
+  "systemtimeout": "Tiempo de espera del sistema (ms)",
+  "factortimeout": "Multiplicador del tiempo de espera del sistema"
 }

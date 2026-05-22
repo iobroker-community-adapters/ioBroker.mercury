@@ -12,5 +12,5 @@
   "parity": "Parity",
   "timeoutresponse": "Response Timeout (ms)",
   "systemtimeout": "System Timeout (ms)",
-  "factortimeout": "System tmeout multiplier"
+  "factortimeout": "System time-out multiplier"
 }

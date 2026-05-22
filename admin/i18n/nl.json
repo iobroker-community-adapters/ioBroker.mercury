@@ -12,5 +12,5 @@
   "parity": "Pariteit",
   "timeoutresponse": "Time-out van reactie (ms)",
   "systemtimeout": "Systeemtime-out (ms)",
-  "factortimeout": "System timeout multiplier"
+  "factortimeout": "Systeem timeout vermenigvuldiger"
 }
