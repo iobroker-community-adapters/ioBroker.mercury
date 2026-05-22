@@ -1,0 +1,173 @@
+{
+  "i18n": true,
+  "type": "panel",
+  "items": {
+    "headerSettings": {
+      "type": "header",
+      "text": "settings",
+      "size": 2,
+      "xs": 12,
+      "sm": 12,
+      "md": 12,
+      "lg": 12,
+      "xl": 12
+    },
+    "typeconnect": {
+      "type": "select",
+      "label": "typeconnect",
+      "options": [
+        {
+          "label": "tcp",
+          "value": "tcp"
+        },
+        {
+          "label": "usb",
+          "value": "usb"
+        }
+      ],
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "ip": {
+      "type": "text",
+      "label": "ip",
+      "hidden": "data.typeconnect !== \"tcp\"",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "tcpport": {
+      "type": "number",
+      "label": "tcpport",
+      "min": 0,
+      "hidden": "data.typeconnect !== \"tcp\"",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "fastpollingtime": {
+      "type": "number",
+      "label": "fastPollingTime",
+      "min": 1,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "slowpollingtime": {
+      "type": "number",
+      "label": "slowPollingTime",
+      "min": 5000,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "usbport": {
+      "type": "text",
+      "label": "usbport",
+      "hidden": "data.typeconnect !== \"usb\"",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "baud": {
+      "type": "select",
+      "label": "baud",
+      "options": [
+        {
+          "label": "1200",
+          "value": 1200
+        },
+        {
+          "label": "2400",
+          "value": 2400
+        },
+        {
+          "label": "4800",
+          "value": 4800
+        },
+        {
+          "label": "9600",
+          "value": 9600
+        },
+        {
+          "label": "19200",
+          "value": 19200
+        },
+        {
+          "label": "38400",
+          "value": 38400
+        },
+        {
+          "label": "57600",
+          "value": 57600
+        },
+        {
+          "label": "115200",
+          "value": 115200
+        }
+      ],
+      "hidden": "data.typeconnect !== \"usb\"",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "parity": {
+      "type": "checkbox",
+      "label": "parity",
+      "hidden": "data.typeconnect !== \"usb\"",
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "timeoutresponse": {
+      "type": "number",
+      "label": "timeoutresponse",
+      "min": 0,
+      "max": 5000,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "systemtimeout": {
+      "type": "number",
+      "label": "systemtimeout",
+      "min": 0,
+      "max": 100,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    },
+    "factortimeout": {
+      "type": "number",
+      "label": "factortimeout",
+      "min": 0,
+      "max": 25,
+      "xs": 12,
+      "sm": 12,
+      "md": 6,
+      "lg": 4,
+      "xl": 4
+    }
+  }
+}

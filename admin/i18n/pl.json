@@ -1,0 +1,16 @@
+{
+  "settings": "Ustawienia",
+  "typeconnect": "Rodzaj połączenia",
+  "tcp": "TCP/IP",
+  "usb": "USB/COM",
+  "ip": "IP-adres",
+  "tcpport": "Port",
+  "fastPollingTime": "Okres badania głównych parametrów (ms)",
+  "slowPollingTime": "Okres badania nie jest głównymi parametrami (ms)",
+  "usbport": "COM-Port",
+  "baud": "Szybkość transmisji danych",
+  "parity": "Parzystość",
+  "timeoutresponse": "Limit czasu odpowiedzi (ms)",
+  "systemtimeout": "Limit czasu systemu (ms)",
+  "factortimeout": "Mnożnik limitu czasu systemu"
+}

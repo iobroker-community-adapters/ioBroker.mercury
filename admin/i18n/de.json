@@ -1,0 +1,16 @@
+{
+  "settings": "die Einstellungen",
+  "typeconnect": "Verbindungstyp",
+  "tcp": "TCP/IP",
+  "usb": "USB/COM",
+  "ip": "IP-adrese",
+  "tcpport": "Hafen",
+  "fastPollingTime": "Der Erhebungszeitraum der Hauptparameter (ms)",
+  "slowPollingTime": "Der Zeitraum der Umfrage ist nicht der Hauptparameter (ms)",
+  "usbport": "COM-Hafen",
+  "baud": "Datenrate",
+  "parity": "Parität",
+  "timeoutresponse": "Antwortzeitlimit (ms)",
+  "systemtimeout": "System-Timeout (ms)",
+  "factortimeout": "System timeout multiplikator"
+}

@@ -1,0 +1,16 @@
+{
+  "settings": "Instellingen",
+  "typeconnect": "Connectie type",
+  "tcp": "TCP/IP",
+  "usb": "USB/COM",
+  "ip": "IP-adresse",
+  "tcpport": "Port",
+  "fastPollingTime": "De onderzoeksperiode van de belangrijkste parameters (ms)",
+  "slowPollingTime": "De periode van de enquête is niet de belangrijkste parameter (ms)",
+  "usbport": "COM-Port",
+  "baud": "Gegevenssnelheid",
+  "parity": "Pariteit",
+  "timeoutresponse": "Time-out van reactie (ms)",
+  "systemtimeout": "Systeemtime-out (ms)",
+  "factortimeout": "System timeout multiplier"
+}

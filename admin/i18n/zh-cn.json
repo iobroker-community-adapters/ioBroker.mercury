@@ -1,0 +1,16 @@
+{
+  "settings": "设定值",
+  "typeconnect": "连接类型",
+  "tcp": "TCP/IP",
+  "usb": "USB/COM",
+  "ip": "IP-地址",
+  "tcpport": "端口",
+  "fastPollingTime": "调查期主要参数 (ms)",
+  "slowPollingTime": "调查期不是主要参数 (ms)",
+  "usbport": "COM-端口",
+  "baud": "资料速率",
+  "parity": "平价",
+  "timeoutresponse": "响应超时 (ms)",
+  "systemtimeout": "系统超时 (ms)",
+  "factortimeout": "系统超时倍增器"
+}

@@ -1,0 +1,16 @@
+{
+  "settings": "Seadistused",
+  "typeconnect": "ühenduse tüüp",
+  "tcp": "TCP/IP",
+  "usb": "USB/COM",
+  "ip": "IP-aadress",
+  "tcpport": "Port",
+  "fastPollingTime": "Peamiste parameetrite vaatlusperiood (ms)",
+  "slowPollingTime": "Uuringu periood ei ole peamised parameetrid (ms)",
+  "usbport": "COM-Port",
+  "baud": "Andmekiirus",
+  "parity": "Pariteet",
+  "timeoutresponse": "Vastuse aegumine (ms)",
+  "systemtimeout": "Süsteemi aegumine (ms)",
+  "factortimeout": "Süsteemi ajalõpu kordaja"
+}
